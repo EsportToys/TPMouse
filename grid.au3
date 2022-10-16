@@ -39,7 +39,6 @@ Func SingletonOverlay($msg=null,$arg=null)
                   DllCall("user32.dll", "bool", "SetLayeredWindowAttributes", "hwnd", $hOverlay, "INT", 0x00e1e1e1, "byte", 255, "dword", 0x03)
                   GUISetState(@SW_DISABLE)
             Case 'reset'
-                 .active = False
                  .left = 0
                  .top = 0
                  .right = @DesktopWidth
@@ -47,12 +46,24 @@ Func SingletonOverlay($msg=null,$arg=null)
                  GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
             Case 'activate'
                  SingletonOverlay('reset')
-                 .active = True
-                 GUISetState(@SW_SHOW,$hOverlay)
-                 GUISetState(@SW_RESTORE,$hOverlay)
+                 If Not .active Then
+                    .active = True
+                    GUISetState(@SW_SHOW,$hOverlay)
+                    GUISetState(@SW_RESTORE,$hOverlay)
+                 EndIf
+                 MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
+                 HotKeySet('U',NoOp)
+                 HotKeySet('I',NoOp)
+                 HotKeySet('J',NoOp)
+                 HotKeySet('K',NoOp)
             Case 'deactivate'
                  SingletonOverlay('reset')
+                 .active = False
                  GUISetState(@SW_HIDE,$hOverlay)
+                 HotKeySet('U')
+                 HotKeySet('I')
+                 HotKeySet('J')
+                 HotKeySet('K')
             Case 'U'
                  If .active Then
                     .bottom = Int((.top+.bottom)/2)
@@ -119,7 +130,7 @@ Func WM_INPUT($hWnd, $iMsg, $wParam, $lParam)
      Local $struct = DllStructCreate($tag)
      DllCall($user32, 'uint', 'GetRawInputData', 'handle', $lParam, 'uint', 0x10000003, 'struct*', DllStructGetPtr($struct), 'uint*', $size, 'uint', $sizeHeader)
      Switch $struct.VKey
-       Case 0x11,0x12 ; ctrl,alt
+       Case 0x11,0x5B ; ctrl,win
             SingletonKeyState($struct.VKey,BitAnd(0x0001,$struct.Flags)?-1:1)
        Case 0x1B ; esc
             If BitAnd(0x0001,$struct.Flags) Then 
@@ -127,7 +138,7 @@ Func WM_INPUT($hWnd, $iMsg, $wParam, $lParam)
             EndIf
        Case 0x47 ; G
             If BitAnd(0x0001,$struct.Flags) Then ; on keyup so I don't need to check repeat
-               If SingletonKeyState(0x11) + SingletonKeyState(0x12) = 2 Then 
+               If SingletonKeyState(0x11) + SingletonKeyState(0x5B) = 2 Then 
                   SingletonOverlay('activate')
                EndIf
             EndIf
@@ -156,7 +167,8 @@ Func Max($a,$b)
      Return $a>$b?$a:$b
 EndFunc
 
-
+Func NoOp()
+EndFunc
 
 ; #FUNCTION# ====================================================================================================================
 ; Author ........: Valik
