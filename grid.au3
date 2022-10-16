@@ -33,7 +33,7 @@ Func SingletonOverlay($msg=null,$arg=null)
      With $state
           Switch $msg
             Case 'init'
-                  $hOverlay = GUICreate("Overlay",@DesktopWidth,@DesktopHeight,0,0,0x80000000,0x02080080)
+                  $hOverlay = GUICreate("Overlay",@DesktopWidth,@DesktopHeight,0,0,0x80000000,0x02080088)
                   $hFrame = GUICtrlCreateButton("",0,0,@DesktopWidth,@DesktopHeight)
                   GUISetBkColor(0xe1e1e1,$hOverlay)
                   DllCall("user32.dll", "bool", "SetLayeredWindowAttributes", "hwnd", $hOverlay, "INT", 0x00e1e1e1, "byte", 255, "dword", 0x03)
@@ -59,7 +59,6 @@ Func SingletonOverlay($msg=null,$arg=null)
                     .right  = Int((.left+.right)/2)
                     GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
                     MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
-                    GUISetState(@SW_RESTORE,$hOverlay)
                  EndIf
             Case 'I'
                  If .active Then
@@ -67,7 +66,6 @@ Func SingletonOverlay($msg=null,$arg=null)
                     .left   = Int((.left+.right)/2)
                     GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
                     MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
-                    GUISetState(@SW_RESTORE,$hOverlay)
                  EndIf
             Case 'J'
                  If .active Then
@@ -75,7 +73,6 @@ Func SingletonOverlay($msg=null,$arg=null)
                     .right  = Int((.left+.right)/2)
                     GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
                     MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
-                    GUISetState(@SW_RESTORE,$hOverlay)
                  EndIf
             Case 'K'
                  If .active Then
@@ -83,22 +80,18 @@ Func SingletonOverlay($msg=null,$arg=null)
                     .left   = Int((.left+.right)/2)
                     GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
                     MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
-                    GUISetState(@SW_RESTORE,$hOverlay)
                  EndIf
             Case 'M'
                  If .active Then 
                     MouseClick( 'left',   Int((.left+.right)/2), Int((.top+.bottom)/2), 1, 0 )
-                    SingletonOverlay('deactivate')
                  EndIf
             Case ','
                  If .active Then 
                     MouseClick( 'middle', Int((.left+.right)/2), Int((.top+.bottom)/2), 1, 0 )
-                    SingletonOverlay('deactivate')
                  EndIf
             Case '.'
                  If .active Then 
                     MouseClick( 'right',  Int((.left+.right)/2), Int((.top+.bottom)/2), 1, 0 )
-                    SingletonOverlay('deactivate')
                  EndIf
           EndSwitch
      EndWith
