@@ -52,10 +52,11 @@ Func SingletonOverlay($msg=null,$arg=null)
                     GUISetState(@SW_RESTORE,$hOverlay)
                  EndIf
                  MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
-                 HotKeySet('U',NoOp)
-                 HotKeySet('I',NoOp)
-                 HotKeySet('J',NoOp)
-                 HotKeySet('K',NoOp)
+                 HotKeySet('{U}',NoOp)
+                 HotKeySet('{I}',NoOp)
+                 HotKeySet('{J}',NoOp)
+                 HotKeySet('{K}',NoOp)
+                 HotKeySet('{M}',NoOp)
             Case 'deactivate'
                  SingletonOverlay('reset')
                  .active = False
@@ -64,6 +65,7 @@ Func SingletonOverlay($msg=null,$arg=null)
                  HotKeySet('I')
                  HotKeySet('J')
                  HotKeySet('K')
+                 HotKeySet('{M}')
             Case 'U'
                  If .active Then
                     .bottom = Int((.top+.bottom)/2)
