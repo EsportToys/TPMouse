@@ -50,8 +50,8 @@ Func SingletonOverlay($msg=null,$arg=null)
                     .active = True
                     GUISetState(@SW_SHOW,$hOverlay)
                     GUISetState(@SW_RESTORE,$hOverlay)
+                    MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
                  EndIf
-                 MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
                  HotKeySet('{U}',NoOp)
                  HotKeySet('{I}',NoOp)
                  HotKeySet('{J}',NoOp)
