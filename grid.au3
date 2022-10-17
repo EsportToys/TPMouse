@@ -50,7 +50,7 @@ Func SingletonOverlay($msg=null,$arg=null)
                     .active = True
                     GUISetState(@SW_SHOW,$hOverlay)
                     GUISetState(@SW_RESTORE,$hOverlay)
-                    MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
+		    SetCursorPos(Int((.left+.right)/2),Int((.top+.bottom)/2))
                  EndIf
                  HotKeySet('{U}',NoOp)
                  HotKeySet('{I}',NoOp)
@@ -71,28 +71,28 @@ Func SingletonOverlay($msg=null,$arg=null)
                     .bottom = Int((.top+.bottom)/2)
                     .right  = Int((.left+.right)/2)
                     GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
-                    MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
+		    SetCursorPos(Int((.left+.right)/2), Int((.top+.bottom)/2))
                  EndIf
             Case 'I'
                  If .active Then
                     .bottom = Int((.top+.bottom)/2)
                     .left   = Int((.left+.right)/2)
                     GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
-                    MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
+                    SetCursorPos( Int((.left+.right)/2), Int((.top+.bottom)/2) )
                  EndIf
             Case 'J'
                  If .active Then
                     .top    = Int((.top+.bottom)/2)
                     .right  = Int((.left+.right)/2)
                     GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
-                    MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
+                    SetCursorPos( Int((.left+.right)/2), Int((.top+.bottom)/2) )
                  EndIf
             Case 'K'
                  If .active Then
                     .top    = Int((.top+.bottom)/2)
                     .left   = Int((.left+.right)/2)
                     GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
-                    MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
+                    SetCursorPos( Int((.left+.right)/2), Int((.top+.bottom)/2) )
                  EndIf
             Case 'M'
                  If .active Then 
@@ -173,6 +173,10 @@ Func Max($a,$b)
 EndFunc
 
 Func NoOp()
+EndFunc
+
+Func SetCursorPos($x,$y)
+     DllCall("user32.dll","bool","SetCursorPos","int",$x,"int",$y)
 EndFunc
 
 ; #FUNCTION# ====================================================================================================================
