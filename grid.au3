@@ -61,10 +61,10 @@ Func SingletonOverlay($msg=null,$arg=null)
                  SingletonOverlay('reset')
                  .active = False
                  GUISetState(@SW_HIDE,$hOverlay)
-                 HotKeySet('U')
-                 HotKeySet('I')
-                 HotKeySet('J')
-                 HotKeySet('K')
+                 HotKeySet('{U}')
+                 HotKeySet('{I}')
+                 HotKeySet('{J}')
+                 HotKeySet('{K}')
                  HotKeySet('{M}')
             Case 'U'
                  If .active Then
@@ -96,15 +96,18 @@ Func SingletonOverlay($msg=null,$arg=null)
                  EndIf
             Case 'M'
                  If .active Then 
-                    MouseClick( 'left',   Int((.left+.right)/2), Int((.top+.bottom)/2), 1, 0 )
+;                    MouseClick( 'left',   Int((.left+.right)/2), Int((.top+.bottom)/2), 1, 0 )
+                    MouseClick( 'left' )
                  EndIf
             Case ','
                  If .active Then 
-                    MouseClick( 'middle', Int((.left+.right)/2), Int((.top+.bottom)/2), 1, 0 )
+;                    MouseClick( 'middle', Int((.left+.right)/2), Int((.top+.bottom)/2), 1, 0 )
+                    MouseClick( 'middle' )
                  EndIf
             Case '.'
                  If .active Then 
-                    MouseClick( 'right',  Int((.left+.right)/2), Int((.top+.bottom)/2), 1, 0 )
+;                    MouseClick( 'right',  Int((.left+.right)/2), Int((.top+.bottom)/2), 1, 0 )
+                    MouseClick( 'right' )
                  EndIf
           EndSwitch
      EndWith
