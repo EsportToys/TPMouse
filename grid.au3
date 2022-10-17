@@ -50,59 +50,64 @@ Func SingletonOverlay($msg=null,$arg=null)
                     .active = True
                     GUISetState(@SW_SHOW,$hOverlay)
                     GUISetState(@SW_RESTORE,$hOverlay)
+		    SetCursorPos(Int((.left+.right)/2),Int((.top+.bottom)/2))
                  EndIf
-                 MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
-                 HotKeySet('U',NoOp)
-                 HotKeySet('I',NoOp)
-                 HotKeySet('J',NoOp)
-                 HotKeySet('K',NoOp)
+                 HotKeySet('{U}',NoOp)
+                 HotKeySet('{I}',NoOp)
+                 HotKeySet('{J}',NoOp)
+                 HotKeySet('{K}',NoOp)
+                 HotKeySet('{M}',NoOp)
             Case 'deactivate'
                  SingletonOverlay('reset')
                  .active = False
                  GUISetState(@SW_HIDE,$hOverlay)
-                 HotKeySet('U')
-                 HotKeySet('I')
-                 HotKeySet('J')
-                 HotKeySet('K')
+                 HotKeySet('{U}')
+                 HotKeySet('{I}')
+                 HotKeySet('{J}')
+                 HotKeySet('{K}')
+                 HotKeySet('{M}')
             Case 'U'
                  If .active Then
                     .bottom = Int((.top+.bottom)/2)
                     .right  = Int((.left+.right)/2)
                     GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
-                    MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
+		    SetCursorPos(Int((.left+.right)/2), Int((.top+.bottom)/2))
                  EndIf
             Case 'I'
                  If .active Then
                     .bottom = Int((.top+.bottom)/2)
                     .left   = Int((.left+.right)/2)
                     GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
-                    MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
+                    SetCursorPos( Int((.left+.right)/2), Int((.top+.bottom)/2) )
                  EndIf
             Case 'J'
                  If .active Then
                     .top    = Int((.top+.bottom)/2)
                     .right  = Int((.left+.right)/2)
                     GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
-                    MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
+                    SetCursorPos( Int((.left+.right)/2), Int((.top+.bottom)/2) )
                  EndIf
             Case 'K'
                  If .active Then
                     .top    = Int((.top+.bottom)/2)
                     .left   = Int((.left+.right)/2)
                     GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
-                    MouseMove( Int((.left+.right)/2), Int((.top+.bottom)/2), 0 )
+                    SetCursorPos( Int((.left+.right)/2), Int((.top+.bottom)/2) )
                  EndIf
             Case 'M'
                  If .active Then 
-                    MouseClick( 'left',   Int((.left+.right)/2), Int((.top+.bottom)/2), 1, 0 )
+;                    MouseClick( 'left',   Int((.left+.right)/2), Int((.top+.bottom)/2), 1, 0 )
+                    MouseClick( 'left' )
                  EndIf
             Case ','
                  If .active Then 
-                    MouseClick( 'middle', Int((.left+.right)/2), Int((.top+.bottom)/2), 1, 0 )
+;                    MouseClick( 'middle', Int((.left+.right)/2), Int((.top+.bottom)/2), 1, 0 )
+                    MouseClick( 'middle' )
                  EndIf
             Case '.'
                  If .active Then 
-                    MouseClick( 'right',  Int((.left+.right)/2), Int((.top+.bottom)/2), 1, 0 )
+;                    MouseClick( 'right',  Int((.left+.right)/2), Int((.top+.bottom)/2), 1, 0 )
+                    MouseClick( 'right' )
                  EndIf
           EndSwitch
      EndWith
@@ -168,6 +173,10 @@ Func Max($a,$b)
 EndFunc
 
 Func NoOp()
+EndFunc
+
+Func SetCursorPos($x,$y)
+     DllCall("user32.dll","bool","SetCursorPos","int",$x,"int",$y)
 EndFunc
 
 ; #FUNCTION# ====================================================================================================================
