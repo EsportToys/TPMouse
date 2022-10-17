@@ -1,6 +1,7 @@
 # AutoWarpd
 a hacky version of [rvaiya/warpd]'s Grid Mode, implemented in AutoIt for Windows. Hotkeys are the same except modifiers are Ctrl+Win
 
+Decided to make this on a whim after this discussion on HN: https://news.ycombinator.com/item?id=33222215
 
 ## Instructions:
 
