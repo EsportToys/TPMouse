@@ -1,11 +1,12 @@
 # AutoWarpd
-a hacky version of [rvaiya/warpd](https://github.com/rvaiya/warpd)'s Grid Mode, implemented in AutoIt for Windows. Hotkeys are the same except modifiers are Ctrl+Win
+A hacky version of some of [rvaiya/warpd](https://github.com/rvaiya/warpd)'s features, implemented in AutoIt for Windows. 
 
 Decided to make this on a whim after this discussion on HN: https://news.ycombinator.com/item?id=33222215
 
 ## Instructions:
 
-1. Press `Ctrl` `Win` `G` to activate overlay. You'll see a thin grey border surrounding your screen.
+### Grid Mode
+1. Press `Alt` `Shift` `G` to activate overlay. You'll see your main cursor switched to a crosshair, and a thin grey border surrounding your screen.
 
 ![image](https://user-images.githubusercontent.com/98432183/196135124-73a95c99-404e-43e1-b09d-3f94602b31a0.png)
 
@@ -20,3 +21,9 @@ Decided to make this on a whim after this discussion on HN: https://news.ycombin
 4. Press `M`/`,`/`.` to left/middle/right click at the cursor position
 
 ![image](https://user-images.githubusercontent.com/98432183/196136034-7b7da439-ce2b-4d7d-a5f5-972cfc7363e2.png)
+
+
+### Inertia Mode
+1. Press `Alt` `Shift` `C` to activate inertia mode. You'll see your main cursor switched to a crosshair
+2. Use `I`/`J`/`K`/`L` to move the cursor, hold `Shift` to apply brakes for slower/more precise movement, release `Shift` to reset velocity
+3. Press `M`/`,`/`.` to left/middle/right click
