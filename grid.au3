@@ -13,7 +13,7 @@ ProgramLoop()
 
 Func ProgramLoop()
      While 1
-        If SingletonInertia() Then 
+        If SingletonInertia('sim') Then 
            Sleep(10)
         Else
            Sleep(100)
@@ -50,22 +50,22 @@ Func ProcessKeypress($struct)
             If BitAnd(0x0001,$struct.Flags) Then 
                SingletonOverlay('deactivate')
                SingletonInertia('deactivate')
-               DllCall( "user32.dll" , "bool","SetSystemCursor" , "handle",CopyIcon($hCursors[0]) , "dword",32512 )
+               DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[0]), "dword", 32512)
             EndIf
        Case 0x47 ; G
-            If BitAnd(0x0001,$struct.Flags) Then ; on keyup so I don't need to check repeat
+            If BitAnd(0x0001,$struct.Flags) Then
                If SingletonKeyState(0x12) And SingletonKeyState(0x10) Then ; alt shift g
-                  SingletonInertia('deactivate')
+                  If SingletonInertia() Then SingletonInertia('deactivate')
                   SingletonOverlay('activate')
-                  DllCall( "user32.dll" , "bool","SetSystemCursor" , "handle",CopyIcon($hCursors[1]) , "dword",32512 )
+                  DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[1]), "dword", 32512)
                EndIf
             EndIf
        Case 0x43 ; C
-            If BitAnd(0x0001,$struct.Flags) Then ; on keyup so I don't need to check repeat
+            If BitAnd(0x0001,$struct.Flags) Then
                If SingletonKeyState(0x12) And SingletonKeyState(0x10) Then ; alt shift c
-                  SingletonOverlay('deactivate')
+                  If SingletonOverlay() Then SingletonOverlay('deactivate')
                   SingletonInertia('activate')
-                  DllCall( "user32.dll" , "bool","SetSystemCursor" , "handle",CopyIcon($hCursors[1]) , "dword",32512 )
+                  DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[1]), "dword", 32512)
                EndIf
             EndIf
        Case 0x55 ; U
@@ -133,9 +133,9 @@ Func SingletonMoupress($msg=null,$arg=null)
                     If Not( $arg = .mb5 ) Then ClickMouse(5,$arg)
                     .mb5 = $arg
                  EndIf
-            Case 'vscroll'
+            Case 'vsc'
                  If .active Then ScrollMouse($arg,False)
-            Case 'hscroll'
+            Case 'hsc'
                  If .active Then ScrollMouse($arg,True)
           EndSwitch
           Return .active
@@ -170,7 +170,7 @@ Func SingletonInertia($msg=null,$arg=null)
                  If BitAnd(2,$arg) Then .vx=(.vx<0?.vx:0)
                  If BitAnd(4,$arg) Then .vy=(.vy>0?.vy:0)
                  If BitAnd(8,$arg) Then .vy=(.vy<0?.vy:0)
-            Case Else
+            Case 'sim'
                  If .active Then
                     Local $dt = TimerDiff($lastTime)/1000
                     $lastTime = TimerInit()
@@ -195,6 +195,7 @@ Func SingletonInertia($msg=null,$arg=null)
                     Local $cur=GetCursorPos()
                     SingletonInertia('clip', 1*($cur.x=0) + 2*($cur.x=@DesktopWidth-1) + 4*($cur.y=0) + 8*($cur.y=@DesktopHeight-1))
                  EndIf
+            Case Else
           EndSwitch
           Return .active
      EndWith
@@ -226,10 +227,12 @@ Func SingletonOverlay($msg=null,$arg=null)
                     SingletonMoupress('activate')
                  EndIf
             Case 'deactivate'
-                 If Not .active Then Return .active
                  SingletonOverlay('reset')
-                 .active = False
-                 GUISetState(@SW_HIDE,$hOverlay)
+                 If .active Then
+                    .active = False
+                    SingletonMoupress('deactivate')
+                    GUISetState(@SW_HIDE,$hOverlay)
+                 EndIf
             Case 'U'
                  If .active Then
                     .bottom = Int((.top+.bottom)/2)
@@ -258,6 +261,7 @@ Func SingletonOverlay($msg=null,$arg=null)
                     GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
                     SetCursorPos( Int((.left+.right)/2), Int((.top+.bottom)/2) )
                  EndIf
+            Case Else
           EndSwitch
           Return .active
      EndWith
@@ -365,12 +369,12 @@ Func GetSystemCursor($name)
        Case Else
             Return Null
      EndSwitch
-     Local $aCall = DllCall("user32.dll","handle","LoadCursor","handle",Null,"int",$id)
+     Local $aCall = DllCall($user32,"handle","LoadCursor","handle",Null,"int",$id)
      Return $aCall[0]
 EndFunc
 
 Func CopyIcon($handle)
-     Local $aCall = DllCall("user32.dll", "handle", "CopyIcon", "handle", $handle )
+     Local $aCall = DllCall($user32,"handle","CopyIcon","handle",$handle)
      Return $aCall[0]
 EndFunc
 
