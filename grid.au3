@@ -154,8 +154,8 @@ Func SingletonInertia($msg=null,$arg=null)
                  .brake = False
                  .vx = 0
                  .vy = 0
-                 .vmax = 4800 ; ct/s, equals to a0/mu
-                 .mu = 2 ; s^-1
+                 .vmax = 3200 ; ct/s, equals to a0/mu
+                 .mu = 6 ; s^-1
             Case 'activate'
                  SingletonMoupress('activate')
                  SingletonInertia('reset')
@@ -174,7 +174,7 @@ Func SingletonInertia($msg=null,$arg=null)
                  If .active Then
                     Local $dt = TimerDiff($lastTime)/1000
                     $lastTime = TimerInit()
-                    Local $mu = ( .brake  ? .mu*16: .mu           )
+                    Local $mu = ( .brake  ? .mu*10: .mu           )
                     Local $f0 = ( $mu = 0 ? 1     : exp(-$mu*$dt) )
                     Local $f1 = ( $mu = 0 ? $dt   : (1-$f0)/$mu   )
                     Local $f2 = ( $mu = 0 ? $dt^2 : ($dt-$f1)/$mu )
