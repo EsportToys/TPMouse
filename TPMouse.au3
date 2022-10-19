@@ -1,5 +1,5 @@
 #OnAutoItStartRegister SetProcessDPIAware
-_Singleton("ShittyWarpd",0)
+_Singleton('TPMouse',0)
 Opt('GUICloseOnESC',False)
 Opt('TrayMenuMode',3)
 Opt('TrayOnEventMode',1)
