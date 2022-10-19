@@ -11,6 +11,7 @@ Decided to make this on a whim after this discussion on HN: https://news.ycombin
 1. Press `Alt` `Shift` `G` to activate overlay. You'll see your main cursor switched to a crosshair, and a thin grey border surrounding your screen.
 2. Press `I`/`J`/`K`/`L` to bisect the warp region and move your cursor to its center.
 3. Press `F`/`E`/`R` to left/right/middle click at the cursor position.
+4. Press `Esc` to quit mode.
 
 ### Inertia Mode
 ![image](https://user-images.githubusercontent.com/98432183/196675010-b380b898-6e97-4aa9-baf4-c35e0fb185fe.png)
@@ -18,3 +19,4 @@ Decided to make this on a whim after this discussion on HN: https://news.ycombin
 1. Press `Alt` `Shift` `C` to activate inertia mode. You'll see your main cursor switched to a crosshair.
 2. Use `I`/`J`/`K`/`L` to move the cursor, hold `Shift` to apply brakes for slower/more precise movement, release `Shift` to reset velocity. Hold `CapsLk` to scroll vertically/horizontally.
 3. Press `F`/`E`/`R` to left/right/middle click at the cursor position.
+4. Press `Esc` to quit mode.
