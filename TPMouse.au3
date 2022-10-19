@@ -1,17 +1,24 @@
 #OnAutoItStartRegister SetProcessDPIAware
 _Singleton("ShittyWarpd",0)
-Opt("TrayAutoPause",0)
 Opt('GUICloseOnESC',False)
-Global $user32 = DllOpen("user32.dll")     
-Global $hInputWnd = GUICreate("")
-Global $hCursors = [CopyIcon(GetSystemCursor("NORMAL")),CopyIcon(GetSystemCursor("CROSS")),CopyIcon(GetSystemCursor("SIZEALL"))]
-TraySetIcon("%windir%\Cursors\aero_link_xl.cur")
+Opt('TrayMenuMode',3)
+Opt('TrayOnEventMode',1)
+TrayItemSetOnEvent(TrayCreateItem('Exit'),Quit)
+TraySetIcon('%windir%\Cursors\aero_link_xl.cur')
+TraySetToolTip('TPMouse - Inactive')
+Global $user32 = DllOpen('user32.dll')     
+Global $hInputWnd = GUICreate('')
+Global $hCursors = [CopyIcon(GetSystemCursor('NORMAL')),CopyIcon(GetSystemCursor('CROSS')),CopyIcon(GetSystemCursor('SIZEALL'))]
 GUIRegisterMsg(0x00ff,WM_INPUT)
 SetRawinput($hInputWnd, True)
 SingletonOverlay('init')
 SingletonInertia('init')
 OnAutoItExitRegister(Cleanup)
 ProgramLoop()
+
+Func Quit()
+     Exit
+EndFunc
 
 Func ProgramLoop()
      While 1
@@ -54,6 +61,7 @@ Func ProcessKeypress($struct)
                SingletonInertia('deactivate')
                DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[0]), "dword", 32512)
                TraySetIcon("%windir%\Cursors\aero_link_xl.cur")
+               TraySetToolTip('TPMouse - Inactive')
             EndIf
        Case 0x47 ; G
             If BitAnd(0x0001,$struct.Flags) Then
@@ -62,6 +70,7 @@ Func ProcessKeypress($struct)
                   SingletonOverlay('activate')
                   DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[2]), "dword", 32512)
                   TraySetIcon("%windir%\Cursors\aero_move_xl.cur")
+                  TraySetToolTip('TPMouse - Grid')
                EndIf
             EndIf
        Case 0x43 ; C
@@ -71,6 +80,7 @@ Func ProcessKeypress($struct)
                   SingletonInertia('activate')
                   DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[1]), "dword", 32512)
                   TraySetIcon("%windir%\Cursors\aero_pen_xl.cur")
+                  TraySetToolTip('TPMouse - Inertia')
                EndIf
             EndIf
        Case 0x49 ; I
