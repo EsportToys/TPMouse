@@ -88,7 +88,7 @@ Func ProcessKeypress($struct)
        Case 0x52 ; R
             SingletonMoupress('mb3',Not BitAnd(0x0001,$struct.Flags))
        Case 0x10 ; shift
-           If BitAnd(0x0001,$struct.Flags) Then SingletonInertia('reset',True)
+            If BitAnd(0x0001,$struct.Flags) Then SingletonInertia('clip',15)
        Case 0x14 ; caps
             SingletonInertia('lock',Not BitAnd(0x0001,$struct.Flags))
      EndSwitch
@@ -154,12 +154,12 @@ Func SingletonInertia($msg=null,$arg=null)
      With $self
           Switch $msg
             Case 'reset'
-                 If Not $arg Then .lock = False
                  .up = False
                  .down = False
                  .left = False
                  .right = False
                  .brake = False
+                 .lock = False
                  .vx = 0
                  .vy = 0
                  .vmax = 3200 ; ct/s, equals to a0/mu
@@ -175,13 +175,18 @@ Func SingletonInertia($msg=null,$arg=null)
                  SingletonMoupress('deactivate')
             Case 'lock'
                  If .active Then
-                    If .lock <> $arg Then .lock=$arg
+                    If .lock <> $arg Then 
+                       .lock=$arg
+                       SingletonInertia('clip',15)
+                    EndIf
                  EndIf
             Case 'clip'
-                 If BitAnd(1,$arg) Then .vx=(.vx>0?.vx:0)
-                 If BitAnd(2,$arg) Then .vx=(.vx<0?.vx:0)
-                 If BitAnd(4,$arg) Then .vy=(.vy>0?.vy:0)
-                 If BitAnd(8,$arg) Then .vy=(.vy<0?.vy:0)
+                 If .active Then
+                    If BitAnd(1,$arg) Then .vx=(.vx>0?.vx:0)
+                    If BitAnd(2,$arg) Then .vx=(.vx<0?.vx:0)
+                    If BitAnd(4,$arg) Then .vy=(.vy>0?.vy:0)
+                    If BitAnd(8,$arg) Then .vy=(.vy<0?.vy:0)
+                 EndIf
             Case 'sim'
                  If .active Then
                     Local $dt = TimerDiff($lastTime)/1000
