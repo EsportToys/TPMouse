@@ -1,7 +1,7 @@
-# AutoWarpd
-A hacky version of some of [rvaiya/warpd](https://github.com/rvaiya/warpd)'s features, implemented in AutoIt for Windows. 
+# TPMouse
+Control the cursor with your hand staying on the keyboard's homerow, even if you don't have a ThinkPad. 
 
-Decided to make this on a whim after this discussion on HN: https://news.ycombinator.com/item?id=33222215
+Inspired by [rvaiya/warpd](https://github.com/rvaiya/warpd).
 
 ## Inertia Mode
 ![image](https://user-images.githubusercontent.com/98432183/196675010-b380b898-6e97-4aa9-baf4-c35e0fb185fe.png)
