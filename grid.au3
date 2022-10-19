@@ -1,9 +1,11 @@
 #OnAutoItStartRegister SetProcessDPIAware
 _Singleton("ShittyWarpd",0)
+Opt("TrayAutoPause",0)
 Opt('GUICloseOnESC',False)
 Global $user32 = DllOpen("user32.dll")     
 Global $hInputWnd = GUICreate("")
-Global $hCursors = [CopyIcon(GetSystemCursor("NORMAL")),CopyIcon(GetSystemCursor("CROSS"))]
+Global $hCursors = [CopyIcon(GetSystemCursor("NORMAL")),CopyIcon(GetSystemCursor("CROSS")),CopyIcon(GetSystemCursor("SIZEALL"))]
+TraySetIcon("%windir%\Cursors\aero_link_xl.cur")
 GUIRegisterMsg(0x00ff,WM_INPUT)
 SetRawinput($hInputWnd, True)
 SingletonOverlay('init')
@@ -51,13 +53,15 @@ Func ProcessKeypress($struct)
                SingletonOverlay('deactivate')
                SingletonInertia('deactivate')
                DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[0]), "dword", 32512)
+               TraySetIcon("%windir%\Cursors\aero_link_xl.cur")
             EndIf
        Case 0x47 ; G
             If BitAnd(0x0001,$struct.Flags) Then
                If SingletonKeyState(0x12) And SingletonKeyState(0x10) Then ; alt shift g
                   If SingletonInertia() Then SingletonInertia('deactivate')
                   SingletonOverlay('activate')
-                  DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[1]), "dword", 32512)
+                  DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[2]), "dword", 32512)
+                  TraySetIcon("%windir%\Cursors\aero_move_xl.cur")
                EndIf
             EndIf
        Case 0x43 ; C
@@ -66,6 +70,7 @@ Func ProcessKeypress($struct)
                   If SingletonOverlay() Then SingletonOverlay('deactivate')
                   SingletonInertia('activate')
                   DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[1]), "dword", 32512)
+                  TraySetIcon("%windir%\Cursors\aero_pen_xl.cur")
                EndIf
             EndIf
        Case 0x49 ; I
@@ -76,14 +81,16 @@ Func ProcessKeypress($struct)
             If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('K')
        Case 0x4C ; L
             If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('L')
-       Case 0x4D ; M
+       Case 0x46 ; F
             SingletonMoupress('mb1',Not BitAnd(0x0001,$struct.Flags))
-       Case 0xBC ; comma
-            SingletonMoupress('mb3',Not BitAnd(0x0001,$struct.Flags))
-       Case 0xBE ; period
+       Case 0x45 ; E
             SingletonMoupress('mb2',Not BitAnd(0x0001,$struct.Flags))
+       Case 0x52 ; R
+            SingletonMoupress('mb3',Not BitAnd(0x0001,$struct.Flags))
        Case 0x10 ; shift
-           If BitAnd(0x0001,$struct.Flags) Then SingletonInertia('reset')
+           If BitAnd(0x0001,$struct.Flags) Then SingletonInertia('reset',True)
+       Case 0x14 ; caps
+            SingletonInertia('lock',Not BitAnd(0x0001,$struct.Flags))
      EndSwitch
 EndFunc
 
@@ -143,10 +150,11 @@ Func SingletonMoupress($msg=null,$arg=null)
 EndFunc
 
 Func SingletonInertia($msg=null,$arg=null)
-     Local Static $lastTime = TimerInit(), $self = DllStructCreate('bool active;bool up;bool down;bool left;bool right;bool brake;float rx;float ry;float vx;float vy;float vmax;float mu')
+     Local Static $lastTime = TimerInit(), $self = DllStructCreate('bool active;bool lock;bool up;bool down;bool left;bool right;bool brake;float rx;float ry;float vx;float vy;float vmax;float mu')
      With $self
           Switch $msg
             Case 'reset'
+                 If Not $arg Then .lock = False
                  .up = False
                  .down = False
                  .left = False
@@ -165,6 +173,10 @@ Func SingletonInertia($msg=null,$arg=null)
                  .active = False
                  SingletonInertia('reset')
                  SingletonMoupress('deactivate')
+            Case 'lock'
+                 If .active Then
+                    If .lock <> $arg Then .lock=$arg
+                 EndIf
             Case 'clip'
                  If BitAnd(1,$arg) Then .vx=(.vx>0?.vx:0)
                  If BitAnd(2,$arg) Then .vx=(.vx<0?.vx:0)
@@ -182,7 +194,7 @@ Func SingletonInertia($msg=null,$arg=null)
                     Local $a0 = ( $ax*$ax+$ay*$ay ? .vmax*.mu/sqrt($ax*$ax+$ay*$ay) : 0 )
                     Local $dx = $f2*$a0*$ax + $f1*.vx + .rx, $dy = $f2*$a0*$ay + $f1*.vy + .ry
                     Local $vx = $f1*$a0*$ax + $f0*.vx      , $vy = $f1*$a0*$ay + $f0*.vy
-                    If (Round($dx)<>0 Or Round($dy)<>0) Then MoveMouseRel(Round($dx),Round($dy))
+                    If (Round($dx)<>0 Or Round($dy)<>0) Then (.lock ? ScrollMouseXY(Round($dx),Round(-$dy)) : MoveMouseRel(Round($dx),Round($dy)) )
                     .rx = $dx-Round($dx)
                     .ry = $dy-Round($dy)
                     .vx = ($vx*$vx+$vy*$vy<1?0:$vx)
@@ -319,12 +331,15 @@ Func MoveMouseRel($dx,$dy)
      DllCall($user32,"uint","SendInput","uint",1,"struct*",DllStructGetPtr($struct),"int",DllStructGetSize($struct))
 EndFunc
 
-Func ScrollMouse($steps,$hor=False)
-     Local $struct = DllStructCreate("dword type;struct;long dx;long dy;dword mouseData;dword dwFlags;dword time;ulong_ptr dwExtraInfo;endstruct;")
-     $struct.dwFlags=($hor?0x1000:0x0800)
-     $struct.mouseData=Round($steps)
-     $struct.type=0
-     DllCall($user32,"uint","SendInput","uint",1,"struct*",DllStructGetPtr($struct),"int",DllStructGetSize($struct))
+Func ScrollMouseXY($dx,$dy)
+     Local Static $size = DllStructGetSize(DllStructCreate("dword type;struct;long dx;long dy;dword mouseData;dword dwFlags;dword time;ulong_ptr dwExtraInfo;endstruct;"))
+     Local Static $arr = DllStructCreate("dword type1;struct;long dx1;long dy1;dword mouseData1;dword dwFlags1;dword time1;ulong_ptr dwExtraInfo1;endstruct;" & _
+                                         "dword type2;struct;long dx2;long dy2;dword mouseData2;dword dwFlags2;dword time2;ulong_ptr dwExtraInfo2;endstruct;" )
+     $arr.dwFlags1=0x1000
+     $arr.dwFlags2=0x0800
+     $arr.mouseData1=$dx
+     $arr.mouseData2=$dy
+     DllCall($user32,"uint","SendInput","uint",2,"struct*",DllStructGetPtr($arr),"int",$size)
 EndFunc
 
 Func GetSystemCursor($name)
