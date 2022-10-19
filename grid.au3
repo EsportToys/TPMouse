@@ -140,10 +140,6 @@ Func SingletonMoupress($msg=null,$arg=null)
                     If Not( $arg = .mb5 ) Then ClickMouse(5,$arg)
                     .mb5 = $arg
                  EndIf
-            Case 'vsc'
-                 If .active Then ScrollMouse($arg,False)
-            Case 'hsc'
-                 If .active Then ScrollMouse($arg,True)
           EndSwitch
           Return .active
      EndWith
