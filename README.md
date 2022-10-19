@@ -1,22 +1,33 @@
-# AutoWarpd
-a hacky version of [rvaiya/warpd](https://github.com/rvaiya/warpd)'s Grid Mode, implemented in AutoIt for Windows. Hotkeys are the same except modifiers are Ctrl+Win
+# TPMouse
+Control the cursor with your hand staying on the keyboard's homerow, even if you don't have a ThinkPad. 
 
-Decided to make this on a whim after this discussion on HN: https://news.ycombinator.com/item?id=33222215
+Inspired by [rvaiya/warpd](https://github.com/rvaiya/warpd).
 
-## Instructions:
+## Inertia Mode
+![image](https://user-images.githubusercontent.com/98432183/196675010-b380b898-6e97-4aa9-baf4-c35e0fb185fe.png)
 
-1. Press `Ctrl` `Win` `G` to activate overlay. You'll see a thin grey border surrounding your screen.
+1. Press `Alt` `Shift` `C` to activate inertia mode. You'll see your main cursor switched to a crosshair.
+2. Use `I`/`J`/`K`/`L` to move the cursor, hold `Shift` to apply brakes for slower/more precise movement, release `Shift` to reset velocity. Hold `CapsLk` to scroll vertically/horizontally.
+3. Press `F`/`E`/`R` to left/right/middle click at the cursor position.
+4. Press `Esc` to quit mode.
 
-![image](https://user-images.githubusercontent.com/98432183/196135124-73a95c99-404e-43e1-b09d-3f94602b31a0.png)
 
-2. Press `U`/`I`/`J`/`K` to warp your cursor to the center of one of the four quadrants
+## Grid Mode
+![image](https://user-images.githubusercontent.com/98432183/196675614-28eff1a1-c074-48a5-9ebe-ae8bf969e853.png)
 
-![image](https://user-images.githubusercontent.com/98432183/196135311-f35eacad-520d-414e-b13f-cb04646d2a44.png)
+1. Press `Alt` `Shift` `G` to activate overlay. You'll see your main cursor switched to a crosshair, and a thin grey border surrounding your screen.
+2. Press `I`/`J`/`K`/`L` to bisect the warp region and move your cursor to its center.
+3. Press `F`/`E`/`R` to left/right/middle click at the cursor position.
+4. Press `Esc` to quit mode.
 
-3. Continue narrowing down the location using `U`/`I`/`J`/`K`
 
-![image](https://user-images.githubusercontent.com/98432183/196135743-0edb3f8e-541f-4204-b6b5-c5fcd91e7042.png)
+## Demonstration
 
-4. Press `M`/`,`/`.` to left/middle/right click at the cursor position
+### Inertia Mode
 
-![image](https://user-images.githubusercontent.com/98432183/196136034-7b7da439-ce2b-4d7d-a5f5-972cfc7363e2.png)
+https://user-images.githubusercontent.com/98432183/196684128-eadbc7df-fec6-48e6-a283-36c4c8c0cde8.mp4
+
+### Grid Mode
+
+https://user-images.githubusercontent.com/98432183/196685474-30aa53ad-60a1-45b8-8d82-21a3b0aa0819.mp4
+
