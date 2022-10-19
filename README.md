@@ -16,6 +16,5 @@ Decided to make this on a whim after this discussion on HN: https://news.ycombin
 ![image](https://user-images.githubusercontent.com/98432183/196675010-b380b898-6e97-4aa9-baf4-c35e0fb185fe.png)
 
 1. Press `Alt` `Shift` `C` to activate inertia mode. You'll see your main cursor switched to a crosshair.
-2. Use `I`/`J`/`K`/`L` to move the cursor, hold `Shift` to apply brakes for slower/more precise movement, release `Shift` to reset velocity.
+2. Use `I`/`J`/`K`/`L` to move the cursor, hold `Shift` to apply brakes for slower/more precise movement, release `Shift` to reset velocity. Hold `CapsLk` to scroll vertically/horizontally.
 3. Press `F`/`E`/`R` to left/right/middle click at the cursor position.
-4. Hold `CapsLk` to scroll vertically/horizontally.
