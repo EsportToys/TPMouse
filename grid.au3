@@ -68,14 +68,14 @@ Func ProcessKeypress($struct)
                   DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[1]), "dword", 32512)
                EndIf
             EndIf
-       Case 0x55 ; U
-            If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('U')
        Case 0x49 ; I
             If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('I')
        Case 0x4A ; J
             If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('J')
        Case 0x4B ; K
             If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('K')
+       Case 0x4C ; L
+            If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('L')
        Case 0x4D ; M
             SingletonMoupress('mb1',Not BitAnd(0x0001,$struct.Flags))
        Case 0xBC ; comma
@@ -233,23 +233,14 @@ Func SingletonOverlay($msg=null,$arg=null)
                     SingletonMoupress('deactivate')
                     GUISetState(@SW_HIDE,$hOverlay)
                  EndIf
-            Case 'U'
-                 If .active Then
-                    .bottom = Int((.top+.bottom)/2)
-                    .right  = Int((.left+.right)/2)
-                    GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
-		    SetCursorPos(Int((.left+.right)/2), Int((.top+.bottom)/2))
-                 EndIf
             Case 'I'
                  If .active Then
                     .bottom = Int((.top+.bottom)/2)
-                    .left   = Int((.left+.right)/2)
                     GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
                     SetCursorPos( Int((.left+.right)/2), Int((.top+.bottom)/2) )
                  EndIf
             Case 'J'
                  If .active Then
-                    .top    = Int((.top+.bottom)/2)
                     .right  = Int((.left+.right)/2)
                     GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
                     SetCursorPos( Int((.left+.right)/2), Int((.top+.bottom)/2) )
@@ -257,9 +248,14 @@ Func SingletonOverlay($msg=null,$arg=null)
             Case 'K'
                  If .active Then
                     .top    = Int((.top+.bottom)/2)
-                    .left   = Int((.left+.right)/2)
                     GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
                     SetCursorPos( Int((.left+.right)/2), Int((.top+.bottom)/2) )
+                 EndIf
+            Case 'L'
+                 If .active Then
+                    .left   = Int((.left+.right)/2)
+                    GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
+		    SetCursorPos(Int((.left+.right)/2), Int((.top+.bottom)/2))
                  EndIf
             Case Else
           EndSwitch
