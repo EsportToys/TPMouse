@@ -53,7 +53,7 @@ Func SetRawinput($hWnd, $enable)
 EndFunc
 
 Func ProcessKeypress($struct)
-     If $struct.VKey>0 and $struct.VKey<256 Then SingletonKeyState($struct.VKey,BitAnd(0x0001,$struct.Flags)?-1:1)
+     If $struct.VKey>0 and $struct.VKey<256 Then SingletonKeyState($struct.VKey,$struct.MakeCode,$struct.Flags)
      Switch $struct.VKey
        Case 0x1B ; esc
             If BitAnd(0x0001,$struct.Flags) Then 
@@ -65,7 +65,7 @@ Func ProcessKeypress($struct)
             EndIf
        Case 0x47 ; G
             If BitAnd(0x0001,$struct.Flags) Then
-               If SingletonKeyState(0x12) And SingletonKeyState(0x10) Then ; alt shift g
+               If SingletonKeyState(0xA0) And SingletonKeyState(0xA1) Then ; LShift RShift G
                   If SingletonInertia() Then SingletonInertia('deactivate')
                   SingletonOverlay('activate')
                   DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[2]), "dword", 32512)
@@ -75,7 +75,7 @@ Func ProcessKeypress($struct)
             EndIf
        Case 0x43 ; C
             If BitAnd(0x0001,$struct.Flags) Then
-               If SingletonKeyState(0x12) And SingletonKeyState(0x10) Then ; alt shift c
+               If SingletonKeyState(0xA0) And SingletonKeyState(0xA1) Then ; LShift RShift C
                   If SingletonOverlay() Then SingletonOverlay('deactivate')
                   SingletonInertia('activate')
                   DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[1]), "dword", 32512)
@@ -101,6 +101,7 @@ Func ProcessKeypress($struct)
             If BitAnd(0x0001,$struct.Flags) Then SingletonInertia('clip',15)
        Case 0x14 ; caps
             SingletonInertia('lock',Not BitAnd(0x0001,$struct.Flags))
+            If $struct.MakeCode = 0x36 Then SingletonInertia('lock',Not BitAnd(0x0001,$struct.Flags))
      EndSwitch
 EndFunc
 
@@ -121,9 +122,11 @@ Func SingletonMoupress($msg=null,$arg=null)
                  .mb5 = False
             Case 'activate'
                  SingletonMoupress('reset')
+                 EnableHotKeys()
                  .active = True
             Case 'deactivate'
                  .active = False
+                 DisableHotKeys()
                  SingletonMoupress('reset')
             Case 'mb1'
                  If .active Then
@@ -286,18 +289,30 @@ Func SingletonOverlay($msg=null,$arg=null)
      EndWith
 EndFunc
 
-Func SingletonKeyState($vKey=Null, $change=0)
-     Local Static $self[256]
-     If $vKey Then
-        Local $i = $vKey-1
-        Local $after = ( $change>0 ? True : False ) 
-        If $change Then $self[$i]=$after
-        Return $self[$i]
-     ElseIf $vKey=Null Then
-        $self = []
-        ReDim $self[256]
-        Return False
-     EndIf
+Func SingletonKeyState($vKey=Null, $make=Null, $flag=Null)
+     Local Static $self[256] ; vkey range from 0 to 255
+     Local $change = Not ( ($flag=Null) or ($make=Null) )
+     Local $after = Not BitAnd(1,$flag)
+     Switch $vKey
+       Case 0x10 ; shift
+            If $change Then $self[($make=0x36?0xA1:0xA0)]=$after ; (vkey,e0,mk) of lshift is (0xA0,0x00,0x2A), of rshift is (0xA1,0x00,0x36)
+            Return ( $self[0xA0] or $self[0xA1] )
+       Case 0x11 ; ctrl
+            If $change Then $self[(BitAnd(2,$flag)?0xA3:0xA2)]=$after      ; (vkey,e0,mk) of lctrl  is (0xA2,0x00,0x1D), of rctrl  is (0xA3,0xE0,0x1D)
+            Return ( $self[0xA2] or $self[0xA3] )
+       Case 0x12 ; alt
+            If $change Then $self[(BitAnd(2,$flag)?0xA5:0xA4)]=$after      ; (vkey,e0,mk) of lalt   is (0xA4,0x00,0x38), of ralt   is (0xA5,0xE0,0x38)
+            Return ( $self[0xA4] or $self[0xA5] )
+       Case Else
+         If $vKey Then
+            If $change Then $self[$vKey]=$after
+            Return $self[$vKey]
+         ElseIf $vKey=Null Then
+            $self = []
+            ReDim $self[256]
+            Return False
+         EndIf
+     EndSwitch
 EndFunc
 
 Func WM_INPUT($hWnd, $iMsg, $wParam, $lParam)
@@ -460,3 +475,71 @@ Func _Singleton($sOccurrenceName, $iFlag = 0)
 	EndIf
 	Return $aHandle[0]
 EndFunc   ;==>_Singleton
+
+Func EnableHotKeys()
+     HotKeySet('i',i)
+     HotKeySet('j',j)
+     HotKeySet('k',k)
+     HotKeySet('l',l)
+     HotKeySet('f',f)
+     HotKeySet('e',e)
+     HotKeySet('r',r)
+     HotKeySet('+i',i)
+     HotKeySet('+j',j)
+     HotKeySet('+k',k)
+     HotKeySet('+l',l)
+     HotKeySet('+f',f)
+     HotKeySet('+e',e)
+     HotKeySet('+r',r)
+EndFunc
+Func DisableHotKeys()
+     HotKeySet('i')
+     HotKeySet('j')
+     HotKeySet('k')
+     HotKeySet('l')
+     HotKeySet('f')
+     HotKeySet('e')
+     HotKeySet('r')
+     HotKeySet('+i')
+     HotKeySet('+j')
+     HotKeySet('+k')
+     HotKeySet('+l')
+     HotKeySet('+f')
+     HotKeySet('+e')
+     HotKeySet('+r')
+EndFunc
+func i()
+     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     $struct.Vkey = 0x49
+     ProcessKeypress($struct)
+endfunc
+func j()
+     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     $struct.Vkey = 0x4A
+     ProcessKeypress($struct)
+endfunc
+func k()
+     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     $struct.Vkey = 0x4B
+     ProcessKeypress($struct)
+endfunc
+func l()
+     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     $struct.Vkey = 0x4C
+     ProcessKeypress($struct)
+endfunc
+func f()
+     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     $struct.Vkey = 0x46
+     ProcessKeypress($struct)
+endfunc
+func e()
+     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     $struct.Vkey = 0x45
+     ProcessKeypress($struct)
+endfunc
+func r()
+     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     $struct.Vkey = 0x52
+     ProcessKeypress($struct)
+endfunc
