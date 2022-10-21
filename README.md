@@ -25,9 +25,12 @@ Inspired by [rvaiya/warpd](https://github.com/rvaiya/warpd).
 
 ### Inertia Mode
 
-https://user-images.githubusercontent.com/98432183/196684128-eadbc7df-fec6-48e6-a283-36c4c8c0cde8.mp4
+https://user-images.githubusercontent.com/98432183/197256799-fe5e3e8d-9a2e-4c41-bd52-31b4a287499c.mp4
+
+
 
 ### Grid Mode
 
-https://user-images.githubusercontent.com/98432183/196685474-30aa53ad-60a1-45b8-8d82-21a3b0aa0819.mp4
+
+https://user-images.githubusercontent.com/98432183/197257714-67d517bf-c344-434c-a5cb-0c25db4bb2d4.mp4
 
