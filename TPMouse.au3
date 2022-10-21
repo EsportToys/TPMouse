@@ -509,37 +509,37 @@ Func DisableHotKeys()
      HotKeySet('+r')
 EndFunc
 func i()
-     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x49
      ProcessKeypress($struct)
 endfunc
 func j()
-     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x4A
      ProcessKeypress($struct)
 endfunc
 func k()
-     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x4B
      ProcessKeypress($struct)
 endfunc
 func l()
-     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x4C
      ProcessKeypress($struct)
 endfunc
 func f()
-     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x46
      ProcessKeypress($struct)
 endfunc
 func e()
-     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x45
      ProcessKeypress($struct)
 endfunc
 func r()
-     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x52
      ProcessKeypress($struct)
 endfunc
