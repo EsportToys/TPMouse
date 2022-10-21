@@ -3,7 +3,7 @@ _Singleton('TPMouse',0)
 Opt('GUICloseOnESC',False)
 Opt('TrayMenuMode',3)
 Opt('TrayOnEventMode',1)
-TrayItemSetOnEvent(TrayCreateItem('Exit'),Quit)
+TrayItemSetOnEvent(TrayCreateItem('Quit TPMouse'),Quit)
 TraySetIcon('%windir%\Cursors\aero_link_xl.cur')
 TraySetToolTip('TPMouse - Inactive')
 Global $user32 = DllOpen('user32.dll')     
@@ -69,7 +69,7 @@ Func ProcessKeypress($struct)
                   If SingletonInertia() Then SingletonInertia('deactivate')
                   SingletonOverlay('activate')
                   DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[2]), "dword", 32512)
-                  TraySetIcon("%windir%\Cursors\aero_move_xl.cur")
+                  TraySetIcon("%windir%\Cursors\aero_pin_xl.cur")
                   TraySetToolTip('TPMouse - Grid')
                EndIf
             EndIf
@@ -79,7 +79,7 @@ Func ProcessKeypress($struct)
                   If SingletonOverlay() Then SingletonOverlay('deactivate')
                   SingletonInertia('activate')
                   DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[1]), "dword", 32512)
-                  TraySetIcon("%windir%\Cursors\aero_pen_xl.cur")
+                  TraySetIcon("%windir%\Cursors\aero_person_xl.cur")
                   TraySetToolTip('TPMouse - Inertia')
                EndIf
             EndIf
@@ -98,10 +98,9 @@ Func ProcessKeypress($struct)
        Case 0x52 ; R
             SingletonMoupress('mb3',Not BitAnd(0x0001,$struct.Flags))
        Case 0x10 ; shift
-            If BitAnd(0x0001,$struct.Flags) Then SingletonInertia('clip',15)
+            If BitAnd(1,$struct.Flags) Then SingletonInertia('clip',15)
        Case 0x14 ; caps
             SingletonInertia('lock',Not BitAnd(0x0001,$struct.Flags))
-            If $struct.MakeCode = 0x36 Then SingletonInertia('lock',Not BitAnd(0x0001,$struct.Flags))
      EndSwitch
 EndFunc
 
@@ -295,13 +294,13 @@ Func SingletonKeyState($vKey=Null, $make=Null, $flag=Null)
      Local $after = Not BitAnd(1,$flag)
      Switch $vKey
        Case 0x10 ; shift
-            If $change Then $self[($make=0x36?0xA1:0xA0)]=$after ; (vkey,e0,mk) of lshift is (0xA0,0x00,0x2A), of rshift is (0xA1,0x00,0x36)
+            If $change Then $self[($make=0x36?0xA1:0xA0)]=$after      ; (vkey,e0,mk) of lshift is (0xA0,0x00,0x2A), of rshift is (0xA1,0x00,0x36)
             Return ( $self[0xA0] or $self[0xA1] )
        Case 0x11 ; ctrl
-            If $change Then $self[(BitAnd(2,$flag)?0xA3:0xA2)]=$after      ; (vkey,e0,mk) of lctrl  is (0xA2,0x00,0x1D), of rctrl  is (0xA3,0xE0,0x1D)
+            If $change Then $self[(BitAnd(2,$flag)?0xA3:0xA2)]=$after ; (vkey,e0,mk) of lctrl  is (0xA2,0x00,0x1D), of rctrl  is (0xA3,0xE0,0x1D)
             Return ( $self[0xA2] or $self[0xA3] )
        Case 0x12 ; alt
-            If $change Then $self[(BitAnd(2,$flag)?0xA5:0xA4)]=$after      ; (vkey,e0,mk) of lalt   is (0xA4,0x00,0x38), of ralt   is (0xA5,0xE0,0x38)
+            If $change Then $self[(BitAnd(2,$flag)?0xA5:0xA4)]=$after ; (vkey,e0,mk) of lalt   is (0xA4,0x00,0x38), of ralt   is (0xA5,0xE0,0x38)
             Return ( $self[0xA4] or $self[0xA5] )
        Case Else
          If $vKey Then
@@ -509,37 +508,37 @@ Func DisableHotKeys()
      HotKeySet('+r')
 EndFunc
 func i()
-     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x49
      ProcessKeypress($struct)
 endfunc
 func j()
-     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x4A
      ProcessKeypress($struct)
 endfunc
 func k()
-     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x4B
      ProcessKeypress($struct)
 endfunc
 func l()
-     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x4C
      ProcessKeypress($struct)
 endfunc
 func f()
-     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x46
      ProcessKeypress($struct)
 endfunc
 func e()
-     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x45
      ProcessKeypress($struct)
 endfunc
 func r()
-     Local $struct = DllStructCreate('ushort Flags;ushort VKey')
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x52
      ProcessKeypress($struct)
 endfunc
