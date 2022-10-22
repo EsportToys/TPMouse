@@ -4,7 +4,7 @@ Control the cursor with your hand staying on the keyboard's homerow, even if you
 Inspired by [rvaiya/warpd](https://github.com/rvaiya/warpd).
 
 ## Inertia Mode
-![image](https://user-images.githubusercontent.com/98432183/197320657-42d32c6d-b71f-455f-a0ae-8ebad034b338.png)
+![image](https://user-images.githubusercontent.com/98432183/197321069-39283606-2943-4b9e-acbd-984d78208dbd.png)
 
 1. Press `LShift` `RShift` `Space` to activate inertia mode. You'll see your main cursor switched to a crosshair.
 2. Use `I`/`J`/`K`/`L` to move the cursor. Hold `Shift` to brake for more precise movement, hold `Space` to scroll vertically/horizontally.
@@ -13,7 +13,7 @@ Inspired by [rvaiya/warpd](https://github.com/rvaiya/warpd).
 
 
 ## Grid Mode
-![image](https://user-images.githubusercontent.com/98432183/196675614-28eff1a1-c074-48a5-9ebe-ae8bf969e853.png)
+![image](https://user-images.githubusercontent.com/98432183/197321227-00e2f711-fe57-4064-9492-f33d6cd98995.png)
 
 1. Press `LShift` `RShift` `CapsLk` to activate overlay. You'll see your main cursor switched to a crosshair, and a thin grey border surrounding your screen.
 2. Press `I`/`J`/`K`/`L` to bisect the warp region and move your cursor to its center.
