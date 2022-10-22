@@ -65,7 +65,7 @@ Func ProcessKeypress($struct)
             EndIf
        Case 0x47 ; G
             If BitAnd(0x0001,$struct.Flags) Then
-               If SingletonKeyState(0xA0) And SingletonKeyState(0xA1) Then ; LShift RShift G
+               If SingletonKeyState(0x10) And SingletonKeyState(0x14) Then ; Shift CapsLk G
                   If SingletonInertia() Then SingletonInertia('deactivate')
                   SingletonOverlay('activate')
                   DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[2]), "dword", 32512)
@@ -75,7 +75,7 @@ Func ProcessKeypress($struct)
             EndIf
        Case 0x43 ; C
             If BitAnd(0x0001,$struct.Flags) Then
-               If SingletonKeyState(0xA0) And SingletonKeyState(0xA1) Then ; LShift RShift C
+               If SingletonKeyState(0x10) And SingletonKeyState(0x14) Then ; Shift CapsLk C
                   If SingletonOverlay() Then SingletonOverlay('deactivate')
                   SingletonInertia('activate')
                   DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[1]), "dword", 32512)
@@ -99,7 +99,7 @@ Func ProcessKeypress($struct)
             SingletonMoupress('mb3',Not BitAnd(0x0001,$struct.Flags))
        Case 0x10 ; shift
             If BitAnd(1,$struct.Flags) Then SingletonInertia('clip',15)
-       Case 0x14 ; caps
+       Case 0x20 ; space
             SingletonInertia('lock',Not BitAnd(0x0001,$struct.Flags))
      EndSwitch
 EndFunc
@@ -357,14 +357,23 @@ Func MoveMouseRel($dx,$dy)
 EndFunc
 
 Func ScrollMouseXY($dx,$dy)
-     Local Static $size = DllStructGetSize(DllStructCreate("dword type;struct;long dx;long dy;dword mouseData;dword dwFlags;dword time;ulong_ptr dwExtraInfo;endstruct;"))
-     Local Static $arr = DllStructCreate("dword type1;struct;long dx1;long dy1;dword mouseData1;dword dwFlags1;dword time1;ulong_ptr dwExtraInfo1;endstruct;" & _
-                                         "dword type2;struct;long dx2;long dy2;dword mouseData2;dword dwFlags2;dword time2;ulong_ptr dwExtraInfo2;endstruct;" )
-     $arr.dwFlags1=0x1000
-     $arr.dwFlags2=0x0800
-     $arr.mouseData1=$dx
-     $arr.mouseData2=$dy
-     DllCall($user32,"uint","SendInput","uint",2,"struct*",DllStructGetPtr($arr),"int",$size)
+     Local Static $SIZE = DllStructGetSize(DllStructCreate('dword;struct;long;long;dword;dword;dword;ulong_ptr;endstruct;'))
+     Local $count = ($dx?1:0)+($dy?1:0)
+     Local $struct, $arr = DllStructCreate('byte[' & $count*$SIZE & ']'), $ptr = DllStructGetPtr($arr)
+     If $dx Then
+        $struct = DllStructCreate('dword type;struct;long;long;dword data;dword flag;dword;ulong_ptr;endstruct;', $ptr)
+        DllStructSetData($struct,'type',0)
+        DllStructSetData($struct,'flag',0x1000)
+        DllStructSetData($struct,'data',$dx)
+     EndIf
+     If $dy Then
+        $struct = DllStructCreate('dword type;struct;long;long;dword data;dword flag;dword;ulong_ptr;endstruct;', $ptr+($dx?$SIZE:0))
+        DllStructSetData($struct,'type',0)
+        DllStructSetData($struct,'flag',0x0800)
+        DllStructSetData($struct,'data',$dy)
+     EndIf
+     Local $aCall = DllCall( $user32, 'uint', 'SendInput', 'uint', $count, 'struct*', $ptr, 'int', $SIZE )
+    Return $aCall[0]
 EndFunc
 
 Func GetSystemCursor($name)
@@ -483,6 +492,7 @@ Func EnableHotKeys()
      HotKeySet('f',f)
      HotKeySet('e',e)
      HotKeySet('r',r)
+     HotKeySet('{space}',space)
      HotKeySet('+i',i)
      HotKeySet('+j',j)
      HotKeySet('+k',k)
@@ -490,8 +500,10 @@ Func EnableHotKeys()
      HotKeySet('+f',f)
      HotKeySet('+e',e)
      HotKeySet('+r',r)
+     HotKeySet('+{space}',space)
 EndFunc
 Func DisableHotKeys()
+     HotKeySet('{space}')
      HotKeySet('i')
      HotKeySet('j')
      HotKeySet('k')
@@ -499,6 +511,7 @@ Func DisableHotKeys()
      HotKeySet('f')
      HotKeySet('e')
      HotKeySet('r')
+     HotKeySet('{space}')
      HotKeySet('+i')
      HotKeySet('+j')
      HotKeySet('+k')
@@ -506,7 +519,13 @@ Func DisableHotKeys()
      HotKeySet('+f')
      HotKeySet('+e')
      HotKeySet('+r')
+     HotKeySet('+{space}')
 EndFunc
+func space()
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
+     $struct.Vkey = 0x20
+     ProcessKeypress($struct)
+endfunc
 func i()
      Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x49
