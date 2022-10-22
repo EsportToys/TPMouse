@@ -63,9 +63,9 @@ Func ProcessKeypress($struct)
                TraySetIcon("%windir%\Cursors\aero_link_xl.cur")
                TraySetToolTip('TPMouse - Inactive')
             EndIf
-       Case 0x14 ; caps
+       Case 0x47 ; G
             If BitAnd(0x0001,$struct.Flags) Then
-               If SingletonKeyState(0xA0) And SingletonKeyState(0xA1) Then ; LShift RShift CapsLk
+               If SingletonKeyState(0x10) And SingletonKeyState(0x14) Then ; Shift CapsLk G
                   If SingletonInertia() Then SingletonInertia('deactivate')
                   SingletonOverlay('activate')
                   DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[2]), "dword", 32512)
@@ -75,7 +75,7 @@ Func ProcessKeypress($struct)
             EndIf
        Case 0x43 ; C
             If BitAnd(0x0001,$struct.Flags) Then
-               If SingletonKeyState(0xA0) And SingletonKeyState(0xA1) Then ; LShift RShift Space
+               If SingletonKeyState(0x10) And SingletonKeyState(0x14) Then ; Shift CapsLk C
                   If SingletonOverlay() Then SingletonOverlay('deactivate')
                   SingletonInertia('activate')
                   DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[1]), "dword", 32512)
