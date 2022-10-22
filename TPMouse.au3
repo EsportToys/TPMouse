@@ -63,7 +63,7 @@ Func ProcessKeypress($struct)
                TraySetIcon("%windir%\Cursors\aero_link_xl.cur")
                TraySetToolTip('TPMouse - Inactive')
             EndIf
-       Case 0x47 ; G
+       Case 0x14 ; caps
             If BitAnd(0x0001,$struct.Flags) Then
                If SingletonKeyState(0xA0) And SingletonKeyState(0xA1) Then ; LShift RShift G
                   If SingletonInertia() Then SingletonInertia('deactivate')
@@ -99,7 +99,7 @@ Func ProcessKeypress($struct)
             SingletonMoupress('mb3',Not BitAnd(0x0001,$struct.Flags))
        Case 0x10 ; shift
             If BitAnd(1,$struct.Flags) Then SingletonInertia('clip',15)
-       Case 0x14 ; caps
+       Case 0x20 ; space
             SingletonInertia('lock',Not BitAnd(0x0001,$struct.Flags))
      EndSwitch
 EndFunc
@@ -485,6 +485,7 @@ Func _Singleton($sOccurrenceName, $iFlag = 0)
 EndFunc   ;==>_Singleton
 
 Func EnableHotKeys()
+     HotKeySet('{space}',space)
      HotKeySet('i',i)
      HotKeySet('j',j)
      HotKeySet('k',k)
@@ -501,6 +502,7 @@ Func EnableHotKeys()
      HotKeySet('+r',r)
 EndFunc
 Func DisableHotKeys()
+     HotKeySet('{space}')
      HotKeySet('i')
      HotKeySet('j')
      HotKeySet('k')
@@ -516,6 +518,11 @@ Func DisableHotKeys()
      HotKeySet('+e')
      HotKeySet('+r')
 EndFunc
+func space()
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
+     $struct.Vkey = 0x20
+     ProcessKeypress($struct)
+endfunc
 func i()
      Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x49
