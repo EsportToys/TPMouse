@@ -4,7 +4,8 @@ Control the cursor with your hand staying on the keyboard's homerow, even if you
 Inspired by [rvaiya/warpd](https://github.com/rvaiya/warpd).
 
 ## Inertia Mode
-![image](https://user-images.githubusercontent.com/98432183/197323997-d8b554ad-a19b-44cc-96cd-bd03f5c80c94.png)
+![image](https://user-images.githubusercontent.com/98432183/197324047-3de42601-3606-4f05-92a4-6645897085fb.png)
+
 
 1. Press `Shift` `CapsLk` `C` to activate inertia mode. You'll see your main cursor switched to a crosshair.
 2. Use `I`/`J`/`K`/`L` to move the cursor. Hold `Shift` to brake for more precise movement, hold `Space` or `CapsLk` to scroll vertically/horizontally.
