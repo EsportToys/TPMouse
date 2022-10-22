@@ -99,7 +99,7 @@ Func ProcessKeypress($struct)
             SingletonMoupress('mb3',Not BitAnd(0x0001,$struct.Flags))
        Case 0x10 ; shift
             If BitAnd(1,$struct.Flags) Then SingletonInertia('clip',15)
-       Case 0x20 ; space
+       Case 0x14, 0x20 ; capslk or space
             SingletonInertia('lock',Not BitAnd(0x0001,$struct.Flags))
      EndSwitch
 EndFunc
