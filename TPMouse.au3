@@ -73,7 +73,7 @@ Func ProcessKeypress($struct)
                   TraySetToolTip('TPMouse - Grid')
                EndIf
             EndIf
-       Case 0x20 ; space
+       Case 0x43 ; C
             If BitAnd(0x0001,$struct.Flags) Then
                If SingletonKeyState(0xA0) And SingletonKeyState(0xA1) Then ; LShift RShift Space
                   If SingletonOverlay() Then SingletonOverlay('deactivate')
@@ -83,7 +83,6 @@ Func ProcessKeypress($struct)
                   TraySetToolTip('TPMouse - Inertia')
                EndIf
             EndIf
-            SingletonInertia('lock',Not BitAnd(0x0001,$struct.Flags))
        Case 0x49 ; I
             If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('I')
        Case 0x4A ; J
@@ -100,6 +99,8 @@ Func ProcessKeypress($struct)
             SingletonMoupress('mb3',Not BitAnd(0x0001,$struct.Flags))
        Case 0x10 ; shift
             If BitAnd(1,$struct.Flags) Then SingletonInertia('clip',15)
+       Case 0x20 ; space
+            SingletonInertia('lock',Not BitAnd(0x0001,$struct.Flags))
      EndSwitch
 EndFunc
 
