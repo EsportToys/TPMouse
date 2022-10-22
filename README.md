@@ -6,7 +6,7 @@ Inspired by [rvaiya/warpd](https://github.com/rvaiya/warpd).
 ## Inertia Mode
 ![image](https://user-images.githubusercontent.com/98432183/197321069-39283606-2943-4b9e-acbd-984d78208dbd.png)
 
-1. Press `LShift` `RShift` `Space` to activate inertia mode. You'll see your main cursor switched to a crosshair.
+1. Press `LShift` `RShift` `C` to activate inertia mode. You'll see your main cursor switched to a crosshair.
 2. Use `I`/`J`/`K`/`L` to move the cursor. Hold `Shift` to brake for more precise movement, hold `Space` to scroll vertically/horizontally.
 3. Press `F`/`E`/`R` to left/right/middle click at the cursor position.
 4. Press `Esc` to quit mode.
