@@ -65,7 +65,7 @@ Func ProcessKeypress($struct)
             EndIf
        Case 0x14 ; caps
             If BitAnd(0x0001,$struct.Flags) Then
-               If SingletonKeyState(0xA0) And SingletonKeyState(0xA1) Then ; LShift RShift G
+               If SingletonKeyState(0xA0) And SingletonKeyState(0xA1) Then ; LShift RShift CapsLk
                   If SingletonInertia() Then SingletonInertia('deactivate')
                   SingletonOverlay('activate')
                   DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[2]), "dword", 32512)
@@ -73,9 +73,9 @@ Func ProcessKeypress($struct)
                   TraySetToolTip('TPMouse - Grid')
                EndIf
             EndIf
-       Case 0x43 ; C
+       Case 0x20 ; space
             If BitAnd(0x0001,$struct.Flags) Then
-               If SingletonKeyState(0xA0) And SingletonKeyState(0xA1) Then ; LShift RShift C
+               If SingletonKeyState(0xA0) And SingletonKeyState(0xA1) Then ; LShift RShift Space
                   If SingletonOverlay() Then SingletonOverlay('deactivate')
                   SingletonInertia('activate')
                   DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[1]), "dword", 32512)
@@ -83,6 +83,7 @@ Func ProcessKeypress($struct)
                   TraySetToolTip('TPMouse - Inertia')
                EndIf
             EndIf
+            SingletonInertia('lock',Not BitAnd(0x0001,$struct.Flags))
        Case 0x49 ; I
             If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('I')
        Case 0x4A ; J
@@ -99,8 +100,6 @@ Func ProcessKeypress($struct)
             SingletonMoupress('mb3',Not BitAnd(0x0001,$struct.Flags))
        Case 0x10 ; shift
             If BitAnd(1,$struct.Flags) Then SingletonInertia('clip',15)
-       Case 0x20 ; space
-            SingletonInertia('lock',Not BitAnd(0x0001,$struct.Flags))
      EndSwitch
 EndFunc
 
