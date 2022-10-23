@@ -318,7 +318,7 @@ Func WM_INPUT($hWnd, $iMsg, $wParam, $lParam)
      Local $struct = DllStructCreate($tag)
      DllCall($user32, 'uint', 'GetRawInputData', 'handle', $lParam, 'uint', 0x10000003, 'struct*', $struct, 'uint*', $size, 'uint', $sizeHeader)
      ProcessKeypress($struct)
-     Return $wParam ? 0 : 'GUI_RUNDEFMSG'
+     If $wParam Then Return 0
 EndFunc
 
 Func ClickMouse($button, $state)
