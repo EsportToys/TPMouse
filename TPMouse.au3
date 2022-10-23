@@ -53,7 +53,7 @@ Func SetRawinput($hWnd, $enable)
 EndFunc
 
 Func ProcessKeypress($struct)
-     Local Static $_ = SingletonKeybinds
+     Local Static $_ = SingletonKeybinds, $sks=SingletonKeyState
      If $struct.VKey>0 and $struct.VKey<256 Then SingletonKeyState($struct.VKey,$struct.MakeCode,$struct.Flags)
      Switch $struct.VKey
        Case 0x1B ; esc
@@ -66,7 +66,7 @@ Func ProcessKeypress($struct)
             EndIf
        Case 0x47 ; G
             If BitAnd(0x0001,$struct.Flags) Then
-               If SingletonKeyState(0x10) And SingletonKeyState(0x14) Then ; Shift CapsLk G
+               If $sks(0x14) Or ($sks(0xA0) And $sks(0xA1)) Then ; CapsLk+G or LShift+RShift+G
                   If SingletonInertia() Then SingletonInertia('deactivate')
                   SingletonOverlay('activate')
                   DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[2]), "dword", 32512)
@@ -76,7 +76,7 @@ Func ProcessKeypress($struct)
             EndIf
        Case 0x43 ; C
             If BitAnd(0x0001,$struct.Flags) Then
-               If SingletonKeyState(0x10) And SingletonKeyState(0x14) Then ; Shift CapsLk C
+               If $sks(0x14) Or ($sks(0xA0) And $sks(0xA1)) Then ; CapsLk+C or LShift+RShift+C
                   If SingletonOverlay() Then SingletonOverlay('deactivate')
                   SingletonInertia('activate')
                   DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[1]), "dword", 32512)
