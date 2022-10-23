@@ -160,7 +160,8 @@ Func SingletonMoupress($msg=null,$arg=null)
 EndFunc
 
 Func SingletonInertia($msg=null,$arg=null)
-     Local Static $_=SingletonKeybinds, $lastTime = TimerInit(), $self = DllStructCreate('bool active;bool lock;bool up;bool down;bool left;bool right;bool brake;float rx;float ry;float vx;float vy;float vmax;float mu')
+     Local Static $_=SingletonKeybinds, $sks=SingletonKeyState
+     Local Static $lastTime = TimerInit(), $self = DllStructCreate('bool active;bool lock;bool up;bool down;bool left;bool right;bool brake;float rx;float ry;float vx;float vy;float vmax;float mu')
      With $self
           Switch $msg
             Case 'reset'
@@ -214,11 +215,11 @@ Func SingletonInertia($msg=null,$arg=null)
                     .ry = $dy-Round($dy)
                     .vx = ($vx*$vx+$vy*$vy<1?0:$vx)
                     .vy = ($vx*$vx+$vy*$vy<1?0:$vy)
-                    .up    = SingletonKeyState($_('up'))
-                    .left  = SingletonKeyState($_('left'))
-                    .down  = SingletonKeyState($_('down'))
-                    .right = SingletonKeyState($_('right'))
-                    .brake = SingletonKeyState($_('brake'))
+                    .up    = $sks($_('up'))
+                    .left  = $sks($_('left'))
+                    .down  = $sks($_('down'))
+                    .right = $sks($_('right'))
+                    .brake = $sks($_('brake'))
                     Local $cur=GetCursorPos()
                     SingletonInertia('clip', 1*($cur.x=0) + 2*($cur.x=@DesktopWidth-1) + 4*($cur.y=0) + 8*($cur.y=@DesktopHeight-1))
                  EndIf
