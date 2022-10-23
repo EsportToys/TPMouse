@@ -57,8 +57,9 @@ Func ProcessKeypress($struct)
      Local Static $_ = SingletonKeybinds, $sks=SingletonKeyState
      If $struct.VKey>0 and $struct.VKey<256 Then SingletonKeyState($struct.VKey,$struct.MakeCode,$struct.Flags)
      Switch $struct.VKey
-       Case 0x1B ; esc
+       Case 0x1B, 0x14 ; esc or caps
             If BitAnd(0x0001,$struct.Flags) Then 
+               If 0x14 = $struct.VKey And Not ($sks(0xA0) And $sks(0xA1)) Then return
                SingletonOverlay('deactivate')
                SingletonInertia('deactivate')
                DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[0]), "dword", 32512)
