@@ -97,9 +97,9 @@ Func ProcessKeypress($struct)
             SingletonMoupress('mb2',Not BitAnd(0x0001,$struct.Flags))
        Case 0x52 ; R
             SingletonMoupress('mb3',Not BitAnd(0x0001,$struct.Flags))
-       Case 0x10 ; shift
+       Case 0x53 ; S
             If BitAnd(1,$struct.Flags) Then SingletonInertia('clip',15)
-       Case 0x14, 0x20 ; capslk or space
+       Case 0x20 ; space
             SingletonInertia('lock',Not BitAnd(0x0001,$struct.Flags))
      EndSwitch
 EndFunc
@@ -216,7 +216,7 @@ Func SingletonInertia($msg=null,$arg=null)
                     .left  = SingletonKeyState(0x4A)
                     .down  = SingletonKeyState(0x4B)
                     .right = SingletonKeyState(0x4C)
-                    .brake = SingletonKeyState(0x10)
+                    .brake = SingletonKeyState(0x53)
                     Local $cur=GetCursorPos()
                     SingletonInertia('clip', 1*($cur.x=0) + 2*($cur.x=@DesktopWidth-1) + 4*($cur.y=0) + 8*($cur.y=@DesktopHeight-1))
                  EndIf
@@ -492,6 +492,7 @@ Func EnableHotKeys()
      HotKeySet('f',f)
      HotKeySet('e',e)
      HotKeySet('r',r)
+     HotKeySet('s',s)
      HotKeySet('{space}',space)
      HotKeySet('+i',i)
      HotKeySet('+j',j)
@@ -500,10 +501,10 @@ Func EnableHotKeys()
      HotKeySet('+f',f)
      HotKeySet('+e',e)
      HotKeySet('+r',r)
+     HotKeySet('+s',s)
      HotKeySet('+{space}',space)
 EndFunc
 Func DisableHotKeys()
-     HotKeySet('{space}')
      HotKeySet('i')
      HotKeySet('j')
      HotKeySet('k')
@@ -511,6 +512,7 @@ Func DisableHotKeys()
      HotKeySet('f')
      HotKeySet('e')
      HotKeySet('r')
+     HotKeySet('s')
      HotKeySet('{space}')
      HotKeySet('+i')
      HotKeySet('+j')
@@ -519,13 +521,9 @@ Func DisableHotKeys()
      HotKeySet('+f')
      HotKeySet('+e')
      HotKeySet('+r')
+     HotKeySet('+s')
      HotKeySet('+{space}')
 EndFunc
-func space()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x20
-     ProcessKeypress($struct)
-endfunc
 func i()
      Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x49
@@ -559,5 +557,15 @@ endfunc
 func r()
      Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
      $struct.Vkey = 0x52
+     ProcessKeypress($struct)
+endfunc
+func s()
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
+     $struct.Vkey = 0x53
+     ProcessKeypress($struct)
+endfunc
+func space()
+     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
+     $struct.Vkey = 0x20
      ProcessKeypress($struct)
 endfunc
