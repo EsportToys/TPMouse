@@ -1,3 +1,37 @@
+Func SingletonKeybinds($action, $mode=0)
+     ; mode 0 returns vkey, mode 1 returns hotkey, mode 2 returns function
+     Local Static _
+           $up     = [ 0x49 , '{i}'     , callback_i     ] , _
+           $left   = [ 0x4A , '{j}'     , callback_j     ] , _
+           $down   = [ 0x4B , '{k}'     , callback_k     ] , _
+           $right  = [ 0x4C , '{l}'     , callback_l     ] , _
+           $mb1    = [ 0x46 , '{f}'     , callback_f     ] , _
+           $mb2    = [ 0x45 , '{e}'     , callback_e     ] , _
+           $mb3    = [ 0x52 , '{r}'     , callback_r     ] , _
+           $brake  = [ 0x53 , '{s}'     , callback_s     ] , _
+           $scroll = [ 0x20 , '{space}' , callback_space ]
+     Local $i = $mode ? ( $mode=1 ? 1 : 2 ) : 0
+     Switch $action
+       Case 'up'
+            Return $up[$i]
+       Case 'left'
+            Return $left[$i]
+       Case 'down'
+            Return $down[$i]
+       Case 'right'
+            Return $right[$i]
+       Case 'mb1'
+            Return $mb1[$i]
+       Case 'mb2'
+            Return $mb2[$i]
+       Case 'mb3'
+            Return $mb3[$i]
+       Case 'brake'
+            Return $brake[$i]
+       Case 'scroll'
+            Return $scroll[$i]
+     EndSwitch
+EndFunc
 Func EnableHotKeys()
      Local Static $_ = SingletonKeybinds, $arr = ['up','left','down','right','mb1','mb2','mb3','brake','scroll']
      For $cmd in $arr
@@ -12,107 +46,39 @@ Func DisableHotKeys()
          HotKeySet( '+' & $_($cmd,1) )
      Next
 EndFunc
-Func SingletonKeybinds($action, $mode=0)
-     ; mode 0 returns vkey, mode 1 returns hotkey, mode 2 returns function
-     Switch $action
-       Case 'up'
-            If $mode Then 
-               Return ( $mode=1 ? '{i}' : callback_i )
-            Else 
-               Return 0x49
-            EndIf
-       Case 'left'
-            If $mode Then 
-               Return ( $mode=1 ? '{j}' : callback_j )
-            Else 
-               Return 0x4A
-            EndIf
-       Case 'down'
-            If $mode Then 
-               Return ( $mode=1 ? '{k}' : callback_k )
-            Else 
-               Return 0x4B
-            EndIf
-       Case 'right'
-            If $mode Then 
-               Return ( $mode=1 ? '{l}' : callback_l )
-            Else 
-               Return 0x4C
-            EndIf
-       Case 'mb1'
-            If $mode Then 
-               Return ( $mode=1 ? '{f}' : callback_f )
-            Else 
-               Return 0x46
-            EndIf
-       Case 'mb2'
-            If $mode Then 
-               Return ( $mode=1 ? '{e}' : callback_e )
-            Else 
-               Return 0x45
-            EndIf
-       Case 'mb3'
-            If $mode Then 
-               Return ( $mode=1 ? '{r}' : callback_r )
-            Else 
-               Return 0x52
-            EndIf
-       Case 'brake'
-            If $mode Then 
-               Return ( $mode=1 ? '{s}' : callback_s )
-            Else 
-               Return 0x53
-            EndIf
-       Case 'scroll'
-            If $mode Then 
-               Return ( $mode=1 ? '{space}' : callback_space )
-            Else 
-               Return 0x20
-            EndIf
-     EndSwitch
-EndFunc
 Func callback_i()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x49
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x49)
      ProcessKeypress($struct)
 EndFunc
 Func callback_j()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x4A
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x4A)
      ProcessKeypress($struct)
 EndFunc
 Func callback_k()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x4B
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x4B)
      ProcessKeypress($struct)
 EndFunc
 Func callback_l()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x4C
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x4C)
      ProcessKeypress($struct)
 EndFunc
 Func callback_f()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x46
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x46)
      ProcessKeypress($struct)
 EndFunc
 Func callback_e()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x45
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x45)
      ProcessKeypress($struct)
 EndFunc
 Func callback_r()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x52
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x52)
      ProcessKeypress($struct)
 EndFunc
 Func callback_s()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x53
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x53)
      ProcessKeypress($struct)
 EndFunc
 Func callback_space()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x20
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x20)
      ProcessKeypress($struct)
 EndFunc
