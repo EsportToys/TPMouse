@@ -163,133 +163,129 @@ EndFunc
 Func SingletonInertia($msg=null,$arg=null)
      Local Static $_=SingletonKeybinds, $sks=SingletonKeyState
      Local Static $lastTime = TimerInit(), $self = DllStructCreate('bool active;bool lock;bool up;bool down;bool left;bool right;bool brake;float rx;float ry;float vx;float vy;float vmax;float mu')
-     With $self
-          Switch $msg
-            Case 'reset'
-                 .up = False
-                 .down = False
-                 .left = False
-                 .right = False
-                 .brake = False
-                 .lock = False
-                 .vx = 0
-                 .vy = 0
-                 .vmax = 3200 ; ct/s, equals to a0/mu
-                 .mu = 6 ; s^-1
-            Case 'activate'
-                 SingletonMoupress('activate')
-                 SingletonInertia('reset')
-                 .active = True
-                 $lastTime = TimerInit()
-            Case 'deactivate'
-                 .active = False
-                 SingletonInertia('reset')
-                 SingletonMoupress('deactivate')
-            Case 'lock'
-                 If .active Then
-                    If .lock <> $arg Then 
-                       .lock=$arg
-                       SingletonInertia('clip',15)
-                    EndIf
-                 EndIf
-            Case 'clip'
-                 If .active Then
-                    If BitAnd(1,$arg) Then .vx=(.vx>0?.vx:0)
-                    If BitAnd(2,$arg) Then .vx=(.vx<0?.vx:0)
-                    If BitAnd(4,$arg) Then .vy=(.vy>0?.vy:0)
-                    If BitAnd(8,$arg) Then .vy=(.vy<0?.vy:0)
-                 EndIf
-            Case 'sim'
-                 If .active Then
-                    Local $dt = TimerDiff($lastTime)/1000
-                    $lastTime = TimerInit()
-                    Local $mu = ( .brake  ? .mu*10: .mu           )
-                    Local $f0 = ( $mu = 0 ? 1     : exp(-$mu*$dt) )
-                    Local $f1 = ( $mu = 0 ? $dt   : (1-$f0)/$mu   )
-                    Local $f2 = ( $mu = 0 ? $dt^2 : ($dt-$f1)/$mu )
-                    Local $ax = (.left?-1:0)+(.right?1:0), $ay = (.up?-1:0)+(.down?1:0)
-                    Local $a0 = ( $ax*$ax+$ay*$ay ? .vmax*.mu/sqrt($ax*$ax+$ay*$ay) : 0 )
-                    Local $dx = $f2*$a0*$ax + $f1*.vx + .rx, $dy = $f2*$a0*$ay + $f1*.vy + .ry
-                    Local $vx = $f1*$a0*$ax + $f0*.vx      , $vy = $f1*$a0*$ay + $f0*.vy
-                    If (Round($dx)<>0 Or Round($dy)<>0) Then (.lock ? ScrollMouseXY(Round($dx),Round(-$dy)) : MoveMouseRel(Round($dx),Round($dy)) )
-                    .rx = $dx-Round($dx)
-                    .ry = $dy-Round($dy)
-                    .vx = ($vx*$vx+$vy*$vy<1?0:$vx)
-                    .vy = ($vx*$vx+$vy*$vy<1?0:$vy)
-                    .up    = $sks($_('up'))
-                    .left  = $sks($_('left'))
-                    .down  = $sks($_('down'))
-                    .right = $sks($_('right'))
-                    .brake = $sks($_('brake'))
-                    Local $cur=GetCursorPos()
-                    SingletonInertia('clip', 1*($cur.x=0) + 2*($cur.x=@DesktopWidth-1) + 4*($cur.y=0) + 8*($cur.y=@DesktopHeight-1))
-                 EndIf
-            Case Else
-          EndSwitch
-          Return .active
-     EndWith
+     Switch $msg
+       Case 'reset'
+            $self.up = False
+            $self.down = False
+            $self.left = False
+            $self.right = False
+            $self.brake = False
+            $self.lock = False
+            $self.vx = 0
+            $self.vy = 0
+            $self.vmax = 3200 ; ct/s, equals to a0/mu
+            $self.mu = 6 ; s^-1
+       Case 'activate'
+            SingletonMoupress('activate')
+            SingletonInertia('reset')
+            $self.active = True
+            $lastTime = TimerInit()
+       Case 'deactivate'
+            $self.active = False
+            SingletonInertia('reset')
+            SingletonMoupress('deactivate')
+       Case 'lock'
+            If $self.active Then
+               If $self.lock <> $arg Then 
+                  $self.lock=$arg
+                  SingletonInertia('clip',15)
+               EndIf
+            EndIf
+       Case 'clip'
+            If $self.active Then
+               If BitAnd(1,$arg) Then $self.vx=($self.vx>0?$self.vx:0)
+               If BitAnd(2,$arg) Then $self.vx=($self.vx<0?$self.vx:0)
+               If BitAnd(4,$arg) Then $self.vy=($self.vy>0?$self.vy:0)
+               If BitAnd(8,$arg) Then $self.vy=($self.vy<0?$self.vy:0)
+            EndIf
+       Case 'sim'
+            If $self.active Then
+               Local $dt = TimerDiff($lastTime)/1000
+               $lastTime = TimerInit()
+               Local $mu = ( $self.brake ? $self.mu*10: $self.mu )
+               Local $f0 = ( $mu = 0 ? 1     : exp(-$mu*$dt) )
+               Local $f1 = ( $mu = 0 ? $dt   : (1-$f0)/$mu   )
+               Local $f2 = ( $mu = 0 ? $dt^2 : ($dt-$f1)/$mu )
+               Local $ax = ($self.left?-1:0)+($self.right?1:0), $ay = ($self.up?-1:0)+($self.down?1:0)
+               Local $a0 = ( $ax*$ax+$ay*$ay ? $self.vmax*$self.mu/sqrt($ax*$ax+$ay*$ay) : 0 )
+               Local $dx = $f2*$a0*$ax + $f1*$self.vx + $self.rx, $dy = $f2*$a0*$ay + $f1*$self.vy + $self.ry
+               Local $vx = $f1*$a0*$ax + $f0*$self.vx           , $vy = $f1*$a0*$ay + $f0*$self.vy
+               If (Round($dx)<>0 Or Round($dy)<>0) Then ($self.lock ? ScrollMouseXY(Round($dx),Round(-$dy)) : MoveMouseRel(Round($dx),Round($dy)) )
+               $self.rx = $dx-Round($dx)
+               $self.ry = $dy-Round($dy)
+               $self.vx = ($vx*$vx+$vy*$vy<1?0:$vx)
+               $self.vy = ($vx*$vx+$vy*$vy<1?0:$vy)
+               $self.up    = $sks($_('up'))
+               $self.left  = $sks($_('left'))
+               $self.down  = $sks($_('down'))
+               $self.right = $sks($_('right'))
+               $self.brake = $sks($_('brake'))
+               Local $cur=GetCursorPos()
+               SingletonInertia('clip', 1*($cur.x=0) + 2*($cur.x=@DesktopWidth-1) + 4*($cur.y=0) + 8*($cur.y=@DesktopHeight-1))
+            EndIf
+       Case Else
+     EndSwitch
+     Return $self.active
 EndFunc
 
 Func SingletonOverlay($msg=null,$arg=null)
      Local Static $hOverlay, $hFrame, $self = DllStructCreate('bool active;uint left;uint right;uint top;uint bottom')
-     With $self
-          Switch $msg
-            Case 'init'
-                  $hOverlay = GUICreate("Overlay",@DesktopWidth,@DesktopHeight,0,0,0x80000000,0x02080088)
-                  $hFrame = GUICtrlCreateButton("",0,0,@DesktopWidth,@DesktopHeight)
-                  GUISetBkColor(0xe1e1e1,$hOverlay)
-                  DllCall("user32.dll", "bool", "SetLayeredWindowAttributes", "hwnd", $hOverlay, "INT", 0x00e1e1e1, "byte", 255, "dword", 0x03)
-                  GUISetState(@SW_DISABLE)
-            Case 'reset'
-                 .left = 0
-                 .top = 0
-                 .right = @DesktopWidth
-                 .bottom = @DesktopHeight
-                 GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
-            Case 'activate'
-                 SingletonOverlay('reset')
-                 If Not .active Then
-                    .active = True
-                    GUISetState(@SW_SHOW,$hOverlay)
-                    GUISetState(@SW_RESTORE,$hOverlay)
-		    SetCursorPos(Int((.left+.right)/2),Int((.top+.bottom)/2))
-                    SingletonMoupress('activate')
-                 EndIf
-            Case 'deactivate'
-                 SingletonOverlay('reset')
-                 If .active Then
-                    .active = False
-                    SingletonMoupress('deactivate')
-                    GUISetState(@SW_HIDE,$hOverlay)
-                 EndIf
-            Case 'I'
-                 If .active Then
-                    .bottom = Int((.top+.bottom)/2)
-                    GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
-                    SetCursorPos( Int((.left+.right)/2), Int((.top+.bottom)/2) )
-                 EndIf
-            Case 'J'
-                 If .active Then
-                    .right  = Int((.left+.right)/2)
-                    GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
-                    SetCursorPos( Int((.left+.right)/2), Int((.top+.bottom)/2) )
-                 EndIf
-            Case 'K'
-                 If .active Then
-                    .top    = Int((.top+.bottom)/2)
-                    GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
-                    SetCursorPos( Int((.left+.right)/2), Int((.top+.bottom)/2) )
-                 EndIf
-            Case 'L'
-                 If .active Then
-                    .left   = Int((.left+.right)/2)
-                    GUICtrlSetPos($hFrame,.left,.top,.right-.left,.bottom-.top)
-		    SetCursorPos(Int((.left+.right)/2), Int((.top+.bottom)/2))
-                 EndIf
-            Case Else
-          EndSwitch
-          Return .active
-     EndWith
+     Switch $msg
+       Case 'init'
+             $hOverlay = GUICreate("Overlay",@DesktopWidth,@DesktopHeight,0,0,0x80000000,0x02080088)
+             $hFrame = GUICtrlCreateButton("",0,0,@DesktopWidth,@DesktopHeight)
+             GUISetBkColor(0xe1e1e1,$hOverlay)
+             DllCall("user32.dll", "bool", "SetLayeredWindowAttributes", "hwnd", $hOverlay, "INT", 0x00e1e1e1, "byte", 255, "dword", 0x03)
+             GUISetState(@SW_DISABLE)
+       Case 'reset'
+            $self.left = 0
+            $self.top = 0
+            $self.right = @DesktopWidth
+            $self.bottom = @DesktopHeight
+            GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
+       Case 'activate'
+            SingletonOverlay('reset')
+            If Not $self.active Then
+               $self.active = True
+               GUISetState(@SW_SHOW,$hOverlay)
+               GUISetState(@SW_RESTORE,$hOverlay)
+               SetCursorPos(Int(($self.left+$self.right)/2),Int(($self.top+$self.bottom)/2))
+               SingletonMoupress('activate')
+            EndIf
+       Case 'deactivate'
+            SingletonOverlay('reset')
+            If $self.active Then
+               $self.active = False
+               SingletonMoupress('deactivate')
+               GUISetState(@SW_HIDE,$hOverlay)
+            EndIf
+       Case 'I'
+            If $self.active Then
+               $self.bottom = Int(($self.top+$self.bottom)/2)
+               GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
+               SetCursorPos( Int(($self.left+$self.right)/2), Int(($self.top+$self.bottom)/2) )
+            EndIf
+       Case 'J'
+            If $self.active Then
+               $self.right  = Int(($self.left+$self.right)/2)
+               GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
+               SetCursorPos( Int(($self.left+$self.right)/2), Int(($self.top+$self.bottom)/2) )
+            EndIf
+       Case 'K'
+            If $self.active Then
+               $self.top    = Int(($self.top+$self.bottom)/2)
+               GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
+               SetCursorPos( Int(($self.left+$self.right)/2), Int(($self.top+$self.bottom)/2) )
+            EndIf
+       Case 'L'
+            If $self.active Then
+               $self.left   = Int(($self.left+$self.right)/2)
+               GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
+               SetCursorPos(Int(($self.left+$self.right)/2), Int(($self.top+$self.bottom)/2))
+            EndIf
+       Case Else
+     EndSwitch
+     Return $self.active
 EndFunc
 
 Func SingletonKeyState($vKey=Null, $make=Null, $flag=Null)
@@ -429,7 +425,7 @@ EndFunc
 
 Func GetCursorPos()
      Local $struct = DllStructCreate("long x;long y")
-     DllCall($user32,"bool","GetCursorPos","struct*",DllStructGetPtr($struct))
+     DllCall($user32,"bool","GetCursorPos","struct*",$struct)
      Return $struct
 EndFunc
 
