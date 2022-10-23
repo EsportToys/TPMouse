@@ -44,13 +44,11 @@ EndFunc
 
 Func SetRawinput($hWnd, $enable)
      Local $struct = DllStructCreate('struct;ushort UsagePage;ushort Usage;dword Flags;hwnd Target;endstruct')
-     With  $struct
-           .Target = $hWnd
-           .Flags = $enable ? 0x00000100 : 0x00000001
-           .UsagePage = 0x01 ; generic desktop
-           .Usage = 0x06 ; keyboard
-           DllCall($user32, 'bool', 'RegisterRawInputDevices', 'struct*', $struct, 'uint', 1, 'uint', DllStructGetSize($struct))
-     EndWith
+     $struct.Target = $hWnd
+     $struct.Flags = $enable ? 0x00000100 : 0x00000001
+     $struct.UsagePage = 0x01 ; generic desktop
+     $struct.Usage = 0x06 ; keyboard
+     DllCall($user32, 'bool', 'RegisterRawInputDevices', 'struct*', $struct, 'uint', 1, 'uint', DllStructGetSize($struct))
 EndFunc
 
 Func ProcessKeypress($struct)
@@ -109,55 +107,53 @@ EndFunc
 
 Func SingletonMoupress($msg=null,$arg=null)
      Local Static $self = DllStructCreate('bool active;bool mb1;bool mb2;bool mb3;bool mb4;bool mb5')
-     With $self
-          Switch $msg
-            Case 'reset'
-                 If .mb1 Then ClickMouse(1,False)
-                 If .mb2 Then ClickMouse(2,False)
-                 If .mb3 Then ClickMouse(3,False)
-                 If .mb4 Then ClickMouse(4,False)
-                 If .mb5 Then ClickMouse(5,False)
-                 .mb1 = False
-                 .mb2 = False
-                 .mb3 = False
-                 .mb4 = False
-                 .mb5 = False
-            Case 'activate'
-                 SingletonMoupress('reset')
-                 EnableHotKeys()
-                 .active = True
-            Case 'deactivate'
-                 .active = False
-                 DisableHotKeys()
-                 SingletonMoupress('reset')
-            Case 'mb1'
-                 If .active Then
-                    If Not( $arg = .mb1 ) Then ClickMouse(1,$arg)
-                    .mb1 = $arg
-                 EndIf
-            Case 'mb2'
-                 If .active Then
-                    If Not( $arg = .mb2 ) Then ClickMouse(2,$arg)
-                    .mb2 = $arg
-                 EndIf
-            Case 'mb3'
-                 If .active Then
-                    If Not( $arg = .mb3 ) Then ClickMouse(3,$arg)
-                    .mb3 = $arg
-                 EndIf
-            Case 'mb4'
-                 If .active Then
-                    If Not( $arg = .mb4 ) Then ClickMouse(4,$arg)
-                    .mb4 = $arg
-                 EndIf
-            Case 'mb5'
-                 If .active Then
-                    If Not( $arg = .mb5 ) Then ClickMouse(5,$arg)
-                    .mb5 = $arg
-                 EndIf
-          EndSwitch
-          Return .active
-     EndWith
+     Switch $msg
+       Case 'reset'
+            If $self.mb1 Then ClickMouse(1,False)
+            If $self.mb2 Then ClickMouse(2,False)
+            If $self.mb3 Then ClickMouse(3,False)
+            If $self.mb4 Then ClickMouse(4,False)
+            If $self.mb5 Then ClickMouse(5,False)
+            $self.mb1 = False
+            $self.mb2 = False
+            $self.mb3 = False
+            $self.mb4 = False
+            $self.mb5 = False
+       Case 'activate'
+            SingletonMoupress('reset')
+            EnableHotKeys()
+            $self.active = True
+       Case 'deactivate'
+            $self.active = False
+            DisableHotKeys()
+            SingletonMoupress('reset')
+       Case 'mb1'
+            If $self.active Then
+               If Not( $arg = $self.mb1 ) Then ClickMouse(1,$arg)
+               $self.mb1 = $arg
+            EndIf
+       Case 'mb2'
+            If $self.active Then
+               If Not( $arg = $self.mb2 ) Then ClickMouse(2,$arg)
+               $self.mb2 = $arg
+            EndIf
+       Case 'mb3'
+            If $self.active Then
+               If Not( $arg = $self.mb3 ) Then ClickMouse(3,$arg)
+               $self.mb3 = $arg
+            EndIf
+       Case 'mb4'
+            If $self.active Then
+               If Not( $arg = $self.mb4 ) Then ClickMouse(4,$arg)
+               $self.mb4 = $arg
+            EndIf
+       Case 'mb5'
+            If $self.active Then
+               If Not( $arg = $self.mb5 ) Then ClickMouse(5,$arg)
+               $self.mb5 = $arg
+            EndIf
+     EndSwitch
+     Return $self.active
 EndFunc
 
 Func SingletonInertia($msg=null,$arg=null)
