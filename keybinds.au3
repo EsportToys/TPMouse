@@ -72,47 +72,38 @@ Func SingletonKeybinds($action, $mode=0)
      EndSwitch
 EndFunc
 Func callback_i()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x49
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x49)
      ProcessKeypress($struct)
 EndFunc
 Func callback_j()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x4A
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x4A)
      ProcessKeypress($struct)
 EndFunc
 Func callback_k()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x4B
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x4B)
      ProcessKeypress($struct)
 EndFunc
 Func callback_l()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x4C
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x4C)
      ProcessKeypress($struct)
 EndFunc
 Func callback_f()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x46
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x46)
      ProcessKeypress($struct)
 EndFunc
 Func callback_e()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x45
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x45)
      ProcessKeypress($struct)
 EndFunc
 Func callback_r()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x52
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x52)
      ProcessKeypress($struct)
 EndFunc
 Func callback_s()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x53
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x53)
      ProcessKeypress($struct)
 EndFunc
 Func callback_space()
-     Local $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
-     $struct.Vkey = 0x20
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x20)
      ProcessKeypress($struct)
 EndFunc
