@@ -1,60 +1,35 @@
 Func SingletonKeybinds($action, $mode=0)
      ; mode 0 returns vkey, mode 1 returns hotkey, mode 2 returns function
+     Local Static _
+           $up     = [ 0x49 , '{i}'     , callback_i     ] , _
+           $left   = [ 0x4A , '{j}'     , callback_j     ] , _
+           $down   = [ 0x4B , '{k}'     , callback_k     ] , _
+           $right  = [ 0x4C , '{l}'     , callback_l     ] , _
+           $mb1    = [ 0x46 , '{f}'     , callback_f     ] , _
+           $mb2    = [ 0x45 , '{e}'     , callback_e     ] , _
+           $mb3    = [ 0x52 , '{r}'     , callback_r     ] , _
+           $brake  = [ 0x53 , '{s}'     , callback_s     ] , _
+           $scroll = [ 0x20 , '{space}' , callback_space ]
+     Local $i = $mode ? ( $mode=1 ? 1 : 2 ) : 0
      Switch $action
        Case 'up'
-            If $mode Then 
-               Return ( $mode=1 ? '{i}' : callback_i )
-            Else 
-               Return 0x49
-            EndIf
+            Return $up[$i]
        Case 'left'
-            If $mode Then 
-               Return ( $mode=1 ? '{j}' : callback_j )
-            Else 
-               Return 0x4A
-            EndIf
+            Return $left[$i]
        Case 'down'
-            If $mode Then 
-               Return ( $mode=1 ? '{k}' : callback_k )
-            Else 
-               Return 0x4B
-            EndIf
+            Return $down[$i]
        Case 'right'
-            If $mode Then 
-               Return ( $mode=1 ? '{l}' : callback_l )
-            Else 
-               Return 0x4C
-            EndIf
+            Return $right[$i]
        Case 'mb1'
-            If $mode Then 
-               Return ( $mode=1 ? '{f}' : callback_f )
-            Else 
-               Return 0x46
-            EndIf
+            Return $mb1[$i]
        Case 'mb2'
-            If $mode Then 
-               Return ( $mode=1 ? '{e}' : callback_e )
-            Else 
-               Return 0x45
-            EndIf
+            Return $mb2[$i]
        Case 'mb3'
-            If $mode Then 
-               Return ( $mode=1 ? '{r}' : callback_r )
-            Else 
-               Return 0x52
-            EndIf
+            Return $mb3[$i]
        Case 'brake'
-            If $mode Then 
-               Return ( $mode=1 ? '{s}' : callback_s )
-            Else 
-               Return 0x53
-            EndIf
+            Return $brake[$i]
        Case 'scroll'
-            If $mode Then 
-               Return ( $mode=1 ? '{space}' : callback_space )
-            Else 
-               Return 0x20
-            EndIf
+            Return $scroll[$i]
      EndSwitch
 EndFunc
 Func EnableHotKeys()
