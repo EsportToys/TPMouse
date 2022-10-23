@@ -85,13 +85,13 @@ Func ProcessKeypress($struct)
                EndIf
             EndIf
        Case $_('up')
-            If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('I')
+            If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('up')
        Case $_('left')
-            If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('J')
+            If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('left')
        Case $_('down')
-            If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('K')
+            If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('down')
        Case $_('right')
-            If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('L')
+            If BitAnd(0x0001,$struct.Flags) Then SingletonOverlay('right')
        Case $_('mb1')
             SingletonMoupress('mb1',Not BitAnd(0x0001,$struct.Flags))
        Case $_('mb2')
@@ -255,25 +255,25 @@ Func SingletonOverlay($msg=null,$arg=null)
                SingletonMoupress('deactivate')
                GUISetState(@SW_HIDE,$hOverlay)
             EndIf
-       Case 'I'
+       Case 'up'
             If $self.active Then
                $self.bottom = Int(($self.top+$self.bottom)/2)
                GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
                SetCursorPos( Int(($self.left+$self.right)/2), Int(($self.top+$self.bottom)/2) )
             EndIf
-       Case 'J'
+       Case 'left'
             If $self.active Then
                $self.right  = Int(($self.left+$self.right)/2)
                GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
                SetCursorPos( Int(($self.left+$self.right)/2), Int(($self.top+$self.bottom)/2) )
             EndIf
-       Case 'K'
+       Case 'down'
             If $self.active Then
                $self.top    = Int(($self.top+$self.bottom)/2)
                GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
                SetCursorPos( Int(($self.left+$self.right)/2), Int(($self.top+$self.bottom)/2) )
             EndIf
-       Case 'L'
+       Case 'right'
             If $self.active Then
                $self.left   = Int(($self.left+$self.right)/2)
                GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
@@ -316,9 +316,9 @@ Func WM_INPUT($hWnd, $iMsg, $wParam, $lParam)
      Local Static $tag = $tagHeader & 'ushort MakeCode;ushort Flags;ushort Reserved;ushort VKey;uint Message;ulong ExtraInformation'
      Local Static $sizeHeader = DllStructGetSize(DllStructCreate($tagHeader)), $size = DllStructGetSize(DllStructCreate($tag))
      Local $struct = DllStructCreate($tag)
-     DllCall($user32, 'uint', 'GetRawInputData', 'handle', $lParam, 'uint', 0x10000003, 'struct*', DllStructGetPtr($struct), 'uint*', $size, 'uint', $sizeHeader)
+     DllCall($user32, 'uint', 'GetRawInputData', 'handle', $lParam, 'uint', 0x10000003, 'struct*', $struct, 'uint*', $size, 'uint', $sizeHeader)
      ProcessKeypress($struct)
-     Return 0
+     Return $wParam ? 0 : 'GUI_RUNDEFMSG'
 EndFunc
 
 Func ClickMouse($button, $state)
@@ -340,7 +340,7 @@ Func ClickMouse($button, $state)
             Return
      EndSwitch
      $struct.type=0
-     DllCall($user32,"uint","SendInput","uint",1,"struct*",DllStructGetPtr($struct),"int",DllStructGetSize($struct))
+     DllCall($user32,"uint","SendInput","uint",1,"struct*",$struct,"int",DllStructGetSize($struct))
 EndFunc
 
 Func MoveMouseRel($dx,$dy)
@@ -349,7 +349,7 @@ Func MoveMouseRel($dx,$dy)
      $struct.dx=$dx
      $struct.dy=$dy
      $struct.type=0
-     DllCall($user32,"uint","SendInput","uint",1,"struct*",DllStructGetPtr($struct),"int",DllStructGetSize($struct))
+     DllCall($user32,"uint","SendInput","uint",1,"struct*",$struct,"int",DllStructGetSize($struct))
 EndFunc
 
 Func ScrollMouseXY($dx,$dy)
