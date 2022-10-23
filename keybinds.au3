@@ -1,17 +1,3 @@
-Func EnableHotKeys()
-     Local Static $_ = SingletonKeybinds, $arr = ['up','left','down','right','mb1','mb2','mb3','brake','scroll']
-     For $cmd in $arr
-         HotKeySet(       $_($cmd,1) , $_($cmd,2) )
-         HotKeySet( '+' & $_($cmd,1) , $_($cmd,2) )
-     Next
-EndFunc
-Func DisableHotKeys()
-     Local Static $_ = SingletonKeybinds, $arr = ['up','left','down','right','mb1','mb2','mb3','brake','scroll']
-     For $cmd in $arr
-         HotKeySet(       $_($cmd,1) )
-         HotKeySet( '+' & $_($cmd,1) )
-     Next
-EndFunc
 Func SingletonKeybinds($action, $mode=0)
      ; mode 0 returns vkey, mode 1 returns hotkey, mode 2 returns function
      Switch $action
@@ -70,6 +56,20 @@ Func SingletonKeybinds($action, $mode=0)
                Return 0x20
             EndIf
      EndSwitch
+EndFunc
+Func EnableHotKeys()
+     Local Static $_ = SingletonKeybinds, $arr = ['up','left','down','right','mb1','mb2','mb3','brake','scroll']
+     For $cmd in $arr
+         HotKeySet(       $_($cmd,1) , $_($cmd,2) )
+         HotKeySet( '+' & $_($cmd,1) , $_($cmd,2) )
+     Next
+EndFunc
+Func DisableHotKeys()
+     Local Static $_ = SingletonKeybinds, $arr = ['up','left','down','right','mb1','mb2','mb3','brake','scroll']
+     For $cmd in $arr
+         HotKeySet(       $_($cmd,1) )
+         HotKeySet( '+' & $_($cmd,1) )
+     Next
 EndFunc
 Func callback_i()
      Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;'), $vkey = DllStructSetData($struct,'VKey',0x49)
