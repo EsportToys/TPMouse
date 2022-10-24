@@ -53,11 +53,37 @@ EndFunc
 
 Func ProcessKeypress($struct)
      Local Static $_ = SingletonKeybinds, $sks=SingletonKeyState
+     Local Static $shiftprimed = False, $capsprimed = False
      If $struct.VKey>0 and $struct.VKey<256 Then SingletonKeyState($struct.VKey,$struct.MakeCode,$struct.Flags)
      Switch $struct.VKey
-       Case 0x1B, 0x14 ; esc or caps
+       Case 0x10 ; shift
             If BitAnd(0x0001,$struct.Flags) Then 
-               If 0x14 = $struct.VKey And Not ($sks(0xA0) And $sks(0xA1)) Then return
+               If $shiftprimed Then
+                  HotKeySet('+{c}')
+                  HotKeySet('+{g}')
+               EndIf
+               $shiftprimed = False
+            ElseIf (Not $shiftprimed) And $sks(0xA0) And $sks(0xA1) Then
+               HotKeySet('+{c}',UnsetSelf)
+               HotKeySet('+{g}',UnsetSelf)
+               $shiftprimed = True
+            EndIf
+       Case 0x1B, 0x14 ; esc or caps
+            If 0x14 = $struct.VKey Then
+               If BitAnd(0x0001,$struct.Flags) Then 
+                  If $capsprimed Then
+                     HotKeySet('{c}')
+                     HotKeySet('{g}')
+                  EndIf
+                  $capsprimed = False
+               ElseIf Not $capsprimed Then
+                  HotKeySet('{c}',UnsetSelf)
+                  HotKeySet('{g}',UnsetSelf)
+                  $capsprimed = True
+               EndIf
+            EndIf
+            If BitAnd(0x0001,$struct.Flags) Then 
+               If 0x14 = $struct.VKey And Not ($sks(0xA0) And $sks(0xA1)) Then Return
                SingletonOverlay('deactivate')
                SingletonInertia('deactivate')
                DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[0]), "dword", 32512)
@@ -427,6 +453,10 @@ EndFunc
 
 Func SetCursorPos($x,$y)
      DllCall($user32,"bool","SetCursorPos","int",$x,"int",$y)
+EndFunc
+
+Func UnsetSelf()
+     HotKeySet(@HotKeyPressed)
 EndFunc
 
 ; #FUNCTION# ====================================================================================================================
