@@ -235,6 +235,7 @@ Func SingletonInertia($msg=null,$arg=null)
             If $self.active Then
                Local $dt = TimerDiff($lastTime)/1000
                $lastTime = TimerInit()
+               Local $ds = ( $self.lock  ? $self.ds : $self.dm )
                Local $mu = ( $self.brake ? $self.br : $self.mu )
                Local $f0 = ( $mu = 0 ? 1     : exp(-$mu*$dt) )
                Local $f1 = ( $mu = 0 ? $dt   : (1-$f0)/$mu   )
@@ -243,14 +244,13 @@ Func SingletonInertia($msg=null,$arg=null)
                Local $a0 = ( $ax*$ax+$ay*$ay ? $self.a0/sqrt($ax*$ax+$ay*$ay) : 0 )
                Local $dx = $f2*$a0*$ax + $f1*$self.vx, $dy = $f2*$a0*$ay + $f1*$self.vy
                Local $vx = $f1*$a0*$ax + $f0*$self.vx, $vy = $f1*$a0*$ay + $f0*$self.vy
-               Local $sens = ($self.lock?$self.ds:$self.dm)
-               $dx = $dx*$sens + $self.rx
-               $dy = $dy*$sens + $self.ry
+               $dx = $dx*$ds + $self.rx
+               $dy = $dy*$ds + $self.ry
                If (Round($dx)<>0 Or Round($dy)<>0) Then ($self.lock ? ScrollMouseXY(Round($dx),Round(-$dy)) : MoveMouseRel(Round($dx),Round($dy)) )
                $self.rx = $dx-Round($dx)
                $self.ry = $dy-Round($dy)
-               $self.vx = ($vx*$vx+$vy*$vy<1?0:$vx)
-               $self.vy = ($vx*$vx+$vy*$vy<1?0:$vy)
+               $self.vx = ( 0=$a0 And 1>$vx*$vx+$vy*$vy ) ? 0 : $vx
+               $self.vy = ( 0=$a0 And 1>$vx*$vx+$vy*$vy ) ? 0 : $vy
                $self.up    = $sks($_('up'))
                $self.left  = $sks($_('left'))
                $self.down  = $sks($_('down'))
