@@ -216,14 +216,10 @@ Func SingletonInertia($msg=null,$arg=null)
             Local $brak = IniRead('options.ini','Inertia','BrakingCoef',60)
             Local $norm = IniRead('options.ini','Inertia','NormalSensitivity',1)
             Local $scro = IniRead('options.ini','Inertia','ScrollSensitivity',1)
-            If Not ($damp>=0) Then $damp=6
-            If Not ($brak>=0) Then $brak=60
-            If Not ($norm>0) Then $norm=1
-            If Not ($scro>0) Then $scro=1
-            $self.mu = $damp
-            $self.br = $brak
-            $self.dm = $norm
-            $self.ds = $scro
+            $self.mu = ( 0 <= $damp ? $damp : 6  )
+            $self.br = ( 0 <= $brak ? $brak : 60 )
+            $self.dm = ( 0 <  $norm ? $norm : 1  )
+            $self.ds = ( 0 <  $scro ? $scro : 1  )
        Case 'activate'
             SingletonMoupress('activate')
             SingletonInertia('reset')
