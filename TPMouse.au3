@@ -184,7 +184,23 @@ EndFunc
 
 Func SingletonInertia($msg=null,$arg=null)
      Local Static $_=SingletonKeybinds, $sks=SingletonKeyState
-     Local Static $lastTime = TimerInit(), $self = DllStructCreate('bool active;bool lock;bool up;bool down;bool left;bool right;bool brake;float rx;float ry;float vx;float vy;float a0;float mu;float br;float dm;float ds')
+     Local Static $lastTime = TimerInit()
+     Local Static $self = DllStructCreate( 'bool active;' & _
+                                           'bool lock;' & _
+                                           'bool up;' & _ 
+                                           'bool down;' & _
+                                           'bool left;' & _
+                                           'bool right;' & _
+                                           'bool brake;' & _
+                                           'float rx;' & _
+                                           'float ry;' & _
+                                           'float vx;' & _
+                                           'float vy;' & _
+                                           'float a0;' & _
+                                           'float mu;' & _
+                                           'float br;' & _
+                                           'float dm;' & _
+                                           'float ds;' )
      Switch $msg
        Case 'reset'
             $self.up = False
