@@ -261,8 +261,8 @@ Func SingletonInertia($msg=null,$arg=null)
                If (Round($dx)<>0 Or Round($dy)<>0) Then ($self.lock ? ScrollMouseXY(Round($dx),Round(-$dy)) : MoveMouseRel(Round($dx),Round($dy)) )
                $self.rx = $dx-Round($dx)
                $self.ry = $dy-Round($dy)
-               $self.vx = ( 0=$a0 And 1/$sens>$vx*$vx+$vy*$vy ) ? 0 : $vx
-               $self.vy = ( 0=$a0 And 1/$sens>$vx*$vx+$vy*$vy ) ? 0 : $vy
+               $self.vx = ( 0=$a0 And 1/$ds>$vx*$vx+$vy*$vy ) ? 0 : $vx
+               $self.vy = ( 0=$a0 And 1/$ds>$vx*$vx+$vy*$vy ) ? 0 : $vy
                $self.up    = $sks($_('up'))
                $self.left  = $sks($_('left'))
                $self.down  = $sks($_('down'))
