@@ -198,15 +198,15 @@ Func SingletonInertia($msg=null,$arg=null)
             $self.a0 = 3200*6 ; top speed is 3200 ct/s when damping is 6 and sens is 1
             Local $damp = IniRead('options.ini','Inertia','DampingCoef',6)
             Local $brak = IniRead('options.ini','Inertia','BrakingCoef',60)
-            Local $sens = IniRead('options.ini','Inertia','Sensitivity',1)
-            Local $scro = IniRead('options.ini','Inertia','ScrollSens',1)
+            Local $norm = IniRead('options.ini','Inertia','NormalSensitivity',1)
+            Local $scro = IniRead('options.ini','Inertia','ScrollSensitivity',1)
             If Not ($damp>=0) Then $damp=6
             If Not ($brak>=0) Then $brak=60
-            If Not ($sens>0) Then $sens=1
+            If Not ($norm>0) Then $norm=1
             If Not ($scro>0) Then $scro=1
             $self.mu = $damp
             $self.br = $brak
-            $self.dm = $sens
+            $self.dm = $norm
             $self.ds = $scro
        Case 'activate'
             SingletonMoupress('activate')
