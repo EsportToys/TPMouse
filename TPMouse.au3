@@ -184,7 +184,7 @@ EndFunc
 
 Func SingletonInertia($msg=null,$arg=null)
      Local Static $_=SingletonKeybinds, $sks=SingletonKeyState
-     Local Static $lastTime = TimerInit(), $self = DllStructCreate('bool active;bool lock;bool up;bool down;bool left;bool right;bool brake;float rx;float ry;float vx;float vy;float a0;float mu;float br')
+     Local Static $lastTime = TimerInit(), $self = DllStructCreate('bool active;bool lock;bool up;bool down;bool left;bool right;bool brake;float rx;float ry;float vx;float vy;float a0;float mu;float br;float dm;float ds')
      Switch $msg
        Case 'reset'
             $self.up = False
@@ -195,15 +195,19 @@ Func SingletonInertia($msg=null,$arg=null)
             $self.lock = False
             $self.vx = 0
             $self.vy = 0
-            Local $sens = IniRead('options.ini','Inertia','Sensitivity',1)
+            $self.a0 = 3200*6 ; top speed is 3200 ct/s when damping is 6 and sens is 1
             Local $damp = IniRead('options.ini','Inertia','DampingCoef',6)
             Local $brak = IniRead('options.ini','Inertia','BrakingCoef',60)
-            If Not ($sens>0) Then $sens=1
+            Local $norm = IniRead('options.ini','Inertia','NormalSensitivity',1)
+            Local $scro = IniRead('options.ini','Inertia','ScrollSensitivity',1)
             If Not ($damp>=0) Then $damp=6
             If Not ($brak>=0) Then $brak=60
-            $self.a0 = 19200*$sens ; top speed is 3200 ct/s when damping is 6 and sens is 1
+            If Not ($norm>0) Then $norm=1
+            If Not ($scro>0) Then $scro=1
             $self.mu = $damp
             $self.br = $brak
+            $self.dm = $norm
+            $self.ds = $scro
        Case 'activate'
             SingletonMoupress('activate')
             SingletonInertia('reset')
@@ -231,19 +235,22 @@ Func SingletonInertia($msg=null,$arg=null)
             If $self.active Then
                Local $dt = TimerDiff($lastTime)/1000
                $lastTime = TimerInit()
+               Local $ds = ( $self.lock  ? $self.ds : $self.dm )
                Local $mu = ( $self.brake ? $self.br : $self.mu )
                Local $f0 = ( $mu = 0 ? 1     : exp(-$mu*$dt) )
                Local $f1 = ( $mu = 0 ? $dt   : (1-$f0)/$mu   )
                Local $f2 = ( $mu = 0 ? $dt^2 : ($dt-$f1)/$mu )
                Local $ax = ($self.left?-1:0)+($self.right?1:0), $ay = ($self.up?-1:0)+($self.down?1:0)
                Local $a0 = ( $ax*$ax+$ay*$ay ? $self.a0/sqrt($ax*$ax+$ay*$ay) : 0 )
-               Local $dx = $f2*$a0*$ax + $f1*$self.vx + $self.rx, $dy = $f2*$a0*$ay + $f1*$self.vy + $self.ry
-               Local $vx = $f1*$a0*$ax + $f0*$self.vx           , $vy = $f1*$a0*$ay + $f0*$self.vy
+               Local $dx = $f2*$a0*$ax + $f1*$self.vx, $dy = $f2*$a0*$ay + $f1*$self.vy
+               Local $vx = $f1*$a0*$ax + $f0*$self.vx, $vy = $f1*$a0*$ay + $f0*$self.vy
+               $dx = $dx*$ds + $self.rx
+               $dy = $dy*$ds + $self.ry
                If (Round($dx)<>0 Or Round($dy)<>0) Then ($self.lock ? ScrollMouseXY(Round($dx),Round(-$dy)) : MoveMouseRel(Round($dx),Round($dy)) )
                $self.rx = $dx-Round($dx)
                $self.ry = $dy-Round($dy)
-               $self.vx = ($vx*$vx+$vy*$vy<1?0:$vx)
-               $self.vy = ($vx*$vx+$vy*$vy<1?0:$vy)
+               $self.vx = ( 0=$a0 And 1>$vx*$vx+$vy*$vy ) ? 0 : $vx
+               $self.vy = ( 0=$a0 And 1>$vx*$vx+$vy*$vy ) ? 0 : $vy
                $self.up    = $sks($_('up'))
                $self.left  = $sks($_('left'))
                $self.down  = $sks($_('down'))
