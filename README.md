@@ -10,16 +10,16 @@ Inspired by [rvaiya/warpd](https://github.com/rvaiya/warpd).
 1. To activate, press `CapsLk` `C` or `LShift` `RShift` `C`. You'll see your main cursor switched to a crosshair.
 2. Press `I`/`J`/`K`/`L` to move the cursor. Hold `S` to brake for more precise movement, hold `Space` to scroll vertically/horizontally.
 3. Press `F`/`E`/`R` to left/right/middle click at the cursor position.
-4. To quit, press `Esc` or `LShift` `RShift` `CapsLk`.
+4. To quit, press `Esc` or `LShift` `RShift` `Q` or `CapsLk` `Q`.
 
 
 ## Grid Mode
 ![image](https://user-images.githubusercontent.com/98432183/197323322-09607efb-c940-4add-95e8-660c94c18306.png)
 
-1. To activate, press `CapsLk` `G` or `LShift` `RShift` `G`. You'll see your main cursor switched to a crosshair, and a thin grey border surrounding your screen.
+1. To activate, press `CapsLk` `G` or `LShift` `RShift` `G`. You'll see your main cursor switched to a crosshair, and a thin red border surrounding your screen.
 2. Press `I`/`J`/`K`/`L` to narrow down the search border.
 3. Press `F`/`E`/`R` to left/right/middle click at the cursor position.
-4. To quit, press `Esc` or `LShift` `RShift` `CapsLk`.
+4. To quit, press `Esc` or `LShift` `RShift` `Q` or `CapsLk` `Q`.
 
 
 ## Demonstration
