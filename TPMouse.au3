@@ -184,7 +184,23 @@ EndFunc
 
 Func SingletonInertia($msg=null,$arg=null)
      Local Static $_=SingletonKeybinds, $sks=SingletonKeyState
-     Local Static $lastTime = TimerInit(), $self = DllStructCreate('bool active;bool lock;bool up;bool down;bool left;bool right;bool brake;float rx;float ry;float vx;float vy;float a0;float mu;float br;float dm;float ds')
+     Local Static $lastTime = TimerInit()
+     Local Static $self = DllStructCreate( 'bool active;' & _
+                                           'bool lock;' & _
+                                           'bool up;' & _ 
+                                           'bool down;' & _
+                                           'bool left;' & _
+                                           'bool right;' & _
+                                           'bool brake;' & _
+                                           'float rx;' & _
+                                           'float ry;' & _
+                                           'float vx;' & _
+                                           'float vy;' & _
+                                           'float a0;' & _
+                                           'float mu;' & _
+                                           'float br;' & _
+                                           'float dm;' & _
+                                           'float ds;' )
      Switch $msg
        Case 'reset'
             $self.up = False
@@ -200,14 +216,10 @@ Func SingletonInertia($msg=null,$arg=null)
             Local $brak = IniRead('options.ini','Inertia','BrakingCoef',60)
             Local $norm = IniRead('options.ini','Inertia','NormalSensitivity',1)
             Local $scro = IniRead('options.ini','Inertia','ScrollSensitivity',1)
-            If Not ($damp>=0) Then $damp=6
-            If Not ($brak>=0) Then $brak=60
-            If Not ($norm>0) Then $norm=1
-            If Not ($scro>0) Then $scro=1
-            $self.mu = $damp
-            $self.br = $brak
-            $self.dm = $norm
-            $self.ds = $scro
+            $self.mu = ( 0 <= $damp ? $damp : 6  )
+            $self.br = ( 0 <= $brak ? $brak : 60 )
+            $self.dm = ( 0 <  $norm ? $norm : 1  )
+            $self.ds = ( 0 <  $scro ? $scro : 1  )
        Case 'activate'
             SingletonMoupress('activate')
             SingletonInertia('reset')
@@ -249,8 +261,8 @@ Func SingletonInertia($msg=null,$arg=null)
                If (Round($dx)<>0 Or Round($dy)<>0) Then ($self.lock ? ScrollMouseXY(Round($dx),Round(-$dy)) : MoveMouseRel(Round($dx),Round($dy)) )
                $self.rx = $dx-Round($dx)
                $self.ry = $dy-Round($dy)
-               $self.vx = ( 0=$a0 And 1>$vx*$vx+$vy*$vy ) ? 0 : $vx
-               $self.vy = ( 0=$a0 And 1>$vx*$vx+$vy*$vy ) ? 0 : $vy
+               $self.vx = ( 0=$a0 And 1/$ds>$vx*$vx+$vy*$vy ) ? 0 : $vx
+               $self.vy = ( 0=$a0 And 1/$ds>$vx*$vx+$vy*$vy ) ? 0 : $vy
                $self.up    = $sks($_('up'))
                $self.left  = $sks($_('left'))
                $self.down  = $sks($_('down'))
@@ -269,8 +281,10 @@ Func SingletonOverlay($msg=null,$arg=null)
      Switch $msg
        Case 'init'
              $hOverlay = GUICreate("Overlay",@DesktopWidth,@DesktopHeight,0,0,0x80000000,0x02080088)
-             $hFrame = GUICtrlCreateButton("",0,0,@DesktopWidth,@DesktopHeight)
-             GUISetBkColor(0xe1e1e1,$hOverlay)
+             $hFrame = GUICtrlCreateGraphic(0,0,@DesktopWidth,@DesktopHeight)
+             GUISetBkColor(0xe1e1e1,$hOverlay)   ; sets window color
+             GUICtrlSetColor($hFrame,0xff0000)   ; sets border color
+             GUICtrlSetBkColor($hFrame,0xe1e1e1) ; sets canvas color
              DllCall("user32.dll", "bool", "SetLayeredWindowAttributes", "hwnd", $hOverlay, "INT", 0x00e1e1e1, "byte", 255, "dword", 0x03)
              GUISetState(@SW_DISABLE)
        Case 'reset'
