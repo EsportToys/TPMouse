@@ -56,34 +56,37 @@ Func ProcessKeypress($struct)
      Local Static $shiftprimed = False, $capsprimed = False
      If $struct.VKey>0 and $struct.VKey<256 Then SingletonKeyState($struct.VKey,$struct.MakeCode,$struct.Flags)
      Switch $struct.VKey
-       Case 0x10 ; shift
+       Case 0x10 ; shift, only set priming here because user might still press other keys before releasing
             If BitAnd(0x0001,$struct.Flags) Then 
                If $shiftprimed Then
                   HotKeySet('+{c}')
                   HotKeySet('+{g}')
+                  HotKeySet('+{q}')
                EndIf
                $shiftprimed = False
             ElseIf (Not $shiftprimed) And $sks(0xA0) And $sks(0xA1) Then
                HotKeySet('+{c}',UnsetSelf)
                HotKeySet('+{g}',UnsetSelf)
+               HotKeySet('+{q}',UnsetSelf)
                $shiftprimed = True
             EndIf
-       Case 0x1B, 0x14 ; esc or caps
-            If 0x14 = $struct.VKey Then
-               If BitAnd(0x0001,$struct.Flags) Then 
-                  If $capsprimed Then
-                     HotKeySet('{c}')
-                     HotKeySet('{g}')
-                  EndIf
-                  $capsprimed = False
-               ElseIf Not $capsprimed Then
-                  HotKeySet('{c}',UnsetSelf)
-                  HotKeySet('{g}',UnsetSelf)
-                  $capsprimed = True
-               EndIf
-            EndIf
+       Case 0x14 ; CapsLk, only set priming here because user might still press other keys before releasing
             If BitAnd(0x0001,$struct.Flags) Then 
-               If 0x14 = $struct.VKey And Not ($sks(0xA0) And $sks(0xA1)) Then Return
+               If $capsprimed Then
+                  HotKeySet('{c}')
+                  HotKeySet('{g}')
+                  HotKeySet('{q}')
+               EndIf
+               $capsprimed = False
+            ElseIf Not $capsprimed Then
+               HotKeySet('{c}',UnsetSelf)
+               HotKeySet('{g}',UnsetSelf)
+               HotKeySet('{q}',UnsetSelf)
+               $capsprimed = True
+            EndIf
+       Case 0x1B, 0x51 ; esc or Q
+            If BitAnd(0x0001,$struct.Flags) Then 
+               If 0x51 = $struct.VKey And Not ($sks(0xA0) And $sks(0xA1) Or $sks(0x14)) Then Return
                SingletonOverlay('deactivate')
                SingletonInertia('deactivate')
                DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[0]), "dword", 32512)
