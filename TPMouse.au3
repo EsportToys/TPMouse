@@ -281,8 +281,10 @@ Func SingletonOverlay($msg=null,$arg=null)
      Switch $msg
        Case 'init'
              $hOverlay = GUICreate("Overlay",@DesktopWidth,@DesktopHeight,0,0,0x80000000,0x02080088)
-             $hFrame = GUICtrlCreateButton("",0,0,@DesktopWidth,@DesktopHeight)
-             GUISetBkColor(0xe1e1e1,$hOverlay)
+             $hFrame = GUICtrlCreateGraphic(0,0,@DesktopWidth,@DesktopHeight)
+             GUISetBkColor(0xe1e1e1,$hOverlay)   ; sets window color
+             GUICtrlSetColor($hFrame,0xff0000)   ; sets border color
+             GUICtrlSetBkColor($hFrame,0xe1e1e1) ; sets canvas color
              DllCall("user32.dll", "bool", "SetLayeredWindowAttributes", "hwnd", $hOverlay, "INT", 0x00e1e1e1, "byte", 255, "dword", 0x03)
              GUISetState(@SW_DISABLE)
        Case 'reset'
