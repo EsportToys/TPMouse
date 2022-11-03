@@ -290,12 +290,14 @@ Func SingletonOverlay($msg=null,$arg=null)
              GUICtrlSetBkColor($hFrame,0xe1e1e1) ; sets canvas color
              DllCall("user32.dll", "bool", "SetLayeredWindowAttributes", "hwnd", $hOverlay, "INT", 0x00e1e1e1, "byte", 255, "dword", 0x03)
              GUISetState(@SW_DISABLE)
+       Case 'set'
+            GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
        Case 'reset'
             $self.left = 0
             $self.top = 0
             $self.right = @DesktopWidth
             $self.bottom = @DesktopHeight
-            GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
+            SingletonOverlay('set')
        Case 'activate'
             SingletonOverlay('reset')
             If Not $self.active Then
@@ -315,25 +317,25 @@ Func SingletonOverlay($msg=null,$arg=null)
        Case 'up'
             If $self.active Then
                $self.bottom = Int(($self.top+$self.bottom)/2)
-               GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
+               SingletonOverlay('set')
                SetCursorPos( Int(($self.left+$self.right)/2), Int(($self.top+$self.bottom)/2) )
             EndIf
        Case 'left'
             If $self.active Then
                $self.right  = Int(($self.left+$self.right)/2)
-               GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
+               SingletonOverlay('set')
                SetCursorPos( Int(($self.left+$self.right)/2), Int(($self.top+$self.bottom)/2) )
             EndIf
        Case 'down'
             If $self.active Then
                $self.top    = Int(($self.top+$self.bottom)/2)
-               GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
+               SingletonOverlay('set')
                SetCursorPos( Int(($self.left+$self.right)/2), Int(($self.top+$self.bottom)/2) )
             EndIf
        Case 'right'
             If $self.active Then
                $self.left   = Int(($self.left+$self.right)/2)
-               GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
+               SingletonOverlay('set')
                SetCursorPos(Int(($self.left+$self.right)/2), Int(($self.top+$self.bottom)/2))
             EndIf
        Case Else
