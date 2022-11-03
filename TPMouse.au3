@@ -1,5 +1,6 @@
 #OnAutoItStartRegister SetProcessDPIAware
 #include 'keybinds.au3'
+#include 'vkeys.au3'
 _Singleton('TPMouse',0)
 Opt('GUICloseOnESC',False)
 Opt('TrayMenuMode',3)
@@ -52,11 +53,11 @@ Func SetRawinput($hWnd, $enable)
 EndFunc
 
 Func ProcessKeypress($struct)
-     Local Static $_ = SingletonKeybinds, $sks=SingletonKeyState
+     Local Static $_ = SingletonKeybinds, $sks=SingletonKeyState, $functionlist = [SingletonInertia,SingletonOverlay]
      Local Static $shiftprimed = False, $capsprimed = False
      If $struct.VKey>0 and $struct.VKey<256 Then SingletonKeyState($struct.VKey,$struct.MakeCode,$struct.Flags)
      Switch $struct.VKey
-       Case 0x10 ; shift, only set priming here because user might still press other keys before releasing
+       Case $VK_SHIFT ; only set priming here because user might still press other keys before releasing
             If BitAnd(0x0001,$struct.Flags) Then 
                If $shiftprimed Then
                   HotKeySet('+{c}')
@@ -64,13 +65,13 @@ Func ProcessKeypress($struct)
                   HotKeySet('+{q}')
                EndIf
                $shiftprimed = False
-            ElseIf (Not $shiftprimed) And $sks(0xA0) And $sks(0xA1) Then
+            ElseIf (Not $shiftprimed) And ($sks($VK_LSHIFT) And $sks($VK_RSHIFT)) Then
                HotKeySet('+{c}',UnsetSelf)
                HotKeySet('+{g}',UnsetSelf)
                HotKeySet('+{q}',UnsetSelf)
                $shiftprimed = True
             EndIf
-       Case 0x14 ; CapsLk, only set priming here because user might still press other keys before releasing
+       Case $VK_CAPS ; only set priming here because user might still press other keys before releasing
             If BitAnd(0x0001,$struct.Flags) Then 
                If $capsprimed Then
                   HotKeySet('{c}')
@@ -84,33 +85,30 @@ Func ProcessKeypress($struct)
                HotKeySet('{q}',UnsetSelf)
                $capsprimed = True
             EndIf
-       Case 0x1B, 0x51 ; esc or Q
+       Case $VK_ESC, $VK_Q
             If BitAnd(0x0001,$struct.Flags) Then 
-               If 0x51 = $struct.VKey And Not ($sks(0xA0) And $sks(0xA1) Or $sks(0x14)) Then Return
-               SingletonOverlay('deactivate')
-               SingletonInertia('deactivate')
+               If $VK_Q = $struct.VKey And Not ( $sks($VK_CAPS) Or ($sks($VK_LSHIFT) And $sks($VK_RSHIFT)) ) Then Return
+               For $func in $functionlist
+                   If $func() Then $func('deactivate')
+               Next
                DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[0]), "dword", 32512)
                TraySetIcon("%windir%\Cursors\aero_link_xl.cur")
                TraySetToolTip('TPMouse - Inactive')
             EndIf
-       Case 0x47 ; G
+       Case $VK_C, $VK_G
             If BitAnd(0x0001,$struct.Flags) Then
-               If $sks(0x14) Or ($sks(0xA0) And $sks(0xA1)) Then ; CapsLk+G or LShift+RShift+G
-                  If SingletonInertia() Then SingletonInertia('deactivate')
-                  SingletonOverlay('activate')
-                  DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[2]), "dword", 32512)
-                  TraySetIcon("%windir%\Cursors\aero_pin_xl.cur")
-                  TraySetToolTip('TPMouse - Grid')
-               EndIf
-            EndIf
-       Case 0x43 ; C
-            If BitAnd(0x0001,$struct.Flags) Then
-               If $sks(0x14) Or ($sks(0xA0) And $sks(0xA1)) Then ; CapsLk+C or LShift+RShift+C
-                  If SingletonOverlay() Then SingletonOverlay('deactivate')
-                  SingletonInertia('activate')
-                  DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[1]), "dword", 32512)
-                  TraySetIcon("%windir%\Cursors\aero_person_xl.cur")
-                  TraySetToolTip('TPMouse - Inertia')
+               If $sks($VK_CAPS) Or ($sks($VK_LSHIFT) And $sks($VK_RSHIFT)) Then
+                  Local $act = ( $VK_C=$struct.VKey ? SingletonInertia       : SingletonOverlay )       , _
+                        $ico = ( $VK_C=$struct.VKey ? 'aero_person_xl.cur'   : 'aero_pin_xl.cur' )      , _
+                        $cur = ( $VK_C=$struct.VKey ? CopyIcon($hCursors[1]) : CopyIcon($hCursors[2]) ) , _
+                        $tip = ( $VK_C=$struct.VKey ? 'TPMouse - Inertia'    : 'TPMouse - Grid')
+                  For $func in $functionlist
+                      If $func() and not ($func=$act) Then $func('deactivate')
+                  Next
+                  $act('activate')
+                  DllCall($user32, "bool", "SetSystemCursor", "handle", $cur, "dword", 32512)
+                  TraySetIcon('%windir%\Cursors\' & $ico)
+                  TraySetToolTip($tip)
                EndIf
             EndIf
        Case $_('up')
