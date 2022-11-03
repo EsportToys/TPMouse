@@ -2,15 +2,20 @@
 ; VKey constants
 ; 0x00 undefined
 Global Const $VK_LBUTTON = 0x01
+Global Const $VK_MOUSE1 = 0x01
 Global Const $VK_MB1 = 0x01
 Global Const $VK_RBUTTON = 0x02
+Global Const $VK_MOUSE2 = 0x02
 Global Const $VK_MB2 = 0x02
 Global Const $VK_CANCEL = 0x03
 Global Const $VK_MBUTTON = 0x04
+Global Const $VK_MOUSE3 = 0x04
 Global Const $VK_MB3 = 0x04
 Global Const $VK_XBUTTON1 = 0x05
+Global Const $VK_MOUSE4 = 0x05
 Global Const $VK_MB4 = 0x05
 Global Const $VK_XBUTTON2 = 0x06
+Global Const $VK_MOUSE5 = 0x06
 Global Const $VK_MB5 = 0x06
 ; 0x07 undefined
 Global Const $VK_BACK = 0x08
@@ -32,6 +37,7 @@ Global Const $VK_PAUSE = 0x13
 Global Const $VK_CAPITAL = 0x14
 Global Const $VK_CAPSLK = 0x14
 Global Const $VK_CAPSLOCK = 0x14
+Global Const $VK_CAPS = 0x14
 Global Const $VK_HANGUL = 0x15
 Global Const $VK_KANA = 0x15
 Global Const $VK_IME_ON = 0x16
