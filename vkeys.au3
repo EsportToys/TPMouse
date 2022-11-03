@@ -1,64 +1,38 @@
 #include-once
-; VKey constants
-; 0x00 undefined
-Global Const $VK_LBUTTON = 0x01
-Global Const $VK_MOUSE1 = 0x01
-Global Const $VK_MB1 = 0x01
-Global Const $VK_RBUTTON = 0x02
-Global Const $VK_MOUSE2 = 0x02
-Global Const $VK_MB2 = 0x02
-Global Const $VK_CANCEL = 0x03
-Global Const $VK_MBUTTON = 0x04
-Global Const $VK_MOUSE3 = 0x04
-Global Const $VK_MB3 = 0x04
-Global Const $VK_XBUTTON1 = 0x05
-Global Const $VK_MOUSE4 = 0x05
-Global Const $VK_MB4 = 0x05
-Global Const $VK_XBUTTON2 = 0x06
-Global Const $VK_MOUSE5 = 0x06
-Global Const $VK_MB5 = 0x06
+Global Const $VK_LBUTTON  = 0x01, $VK_MOUSE1 = 0x01, $VK_MB1 = 0x01
+Global Const $VK_RBUTTON  = 0x02, $VK_MOUSE2 = 0x02, $VK_MB2 = 0x02
+Global Const $VK_CANCEL   = 0x03
+Global Const $VK_MBUTTON  = 0x04, $VK_MOUSE3 = 0x04, $VK_MB3 = 0x04
+Global Const $VK_XBUTTON1 = 0x05, $VK_MOUSE4 = 0x05, $VK_MB4 = 0x05
+Global Const $VK_XBUTTON2 = 0x06, $VK_MOUSE5 = 0x06, $VK_MB5 = 0x06
 ; 0x07 undefined
-Global Const $VK_BACK = 0x08
-Global Const $VK_BACKSPACE = 0x08
+Global Const $VK_BACK = 0x08, $VK_BACKSPACE = 0x08
 Global Const $VK_TAB = 0x09
 ; 0x0A reserved
 ; 0x0B reserved
 Global Const $VK_CLEAR = 0x0C
-Global Const $VK_RETURN = 0x0D
-Global Const $VK_ENTER = 0x0D
+Global Const $VK_RETURN = 0x0D, $VK_ENTER = 0x0D
 ; 0x0E undefined
 ; 0x0F unedfined
 Global Const $VK_SHIFT = 0x10
-Global Const $VK_CONTROL = 0x11
-Global Const $VK_CTRL = 0x11
-Global Const $VK_MENU = 0x12
-Global Const $VK_ALT = 0x12
+Global Const $VK_CONTROL = 0x11, $VK_CTRL = 0x11
+Global Const $VK_MENU = 0x12, $VK_ALT = 0x12
 Global Const $VK_PAUSE = 0x13
-Global Const $VK_CAPITAL = 0x14
-Global Const $VK_CAPSLK = 0x14
-Global Const $VK_CAPSLOCK = 0x14
-Global Const $VK_CAPS = 0x14
-Global Const $VK_HANGUL = 0x15
-Global Const $VK_KANA = 0x15
+Global Const $VK_CAPITAL = 0x14, $VK_CAPSLK = 0x14, $VK_CAPSLOCK = 0x14, $VK_CAPS = 0x14
+Global Const $VK_HANGUL = 0x15, $VK_KANA = 0x15
 Global Const $VK_IME_ON = 0x16
 Global Const $VK_JUNJA = 0x17
 Global Const $VK_FINAL = 0x18
-Global Const $VK_HANJA = 0x19
-Global Const $VK_KANJI = 0x19
+Global Const $VK_HANJA = 0x19, $VK_KANJI = 0x19
 Global Const $VK_IME_OFF = 0x1A
-Global Const $VK_ESCAPE = 0x1B
-Global Const $VK_ESC = 0x1B
+Global Const $VK_ESCAPE = 0x1B, $VK_ESC = 0x1B
 Global Const $VK_CONVERT = 0x1C
 Global Const $VK_NONCONVERT = 0x1D
 Global Const $VK_ACCEPT = 0x1E
 Global Const $VK_MODECHANGE = 0x1F
 Global Const $VK_SPACE = 0x20
-Global Const $VK_PRIOR = 0x21
-Global Const $VK_PGUP = 0x21
-Global Const $VK_PAGEUP = 0x21
-Global Const $VK_NEXT = 0x22
-Global Const $VK_PGDN = 0x22
-Global Const $VK_PAGEDOWN = 0x22
+Global Const $VK_PRIOR = 0x21, $VK_PGUP = 0x21, $VK_PAGEUP = 0x21
+Global Const $VK_NEXT  = 0x22, $VK_PGDN = 0x22, $VK_PAGEDOWN = 0x22
 Global Const $VK_END = 0x23
 Global Const $VK_HOME = 0x24
 Global Const $VK_LEFT = 0x25
@@ -66,15 +40,11 @@ Global Const $VK_UP = 0x26
 Global Const $VK_RIGHT = 0x27
 Global Const $VK_DOWN = 0x28
 Global Const $VK_SELECT = 0x29
-Global Const $VK_PRINT = 0x2A
-Global Const $VK_PRTSCN = 0x2A
-Global Const $VK_PRINTSCREEN = 0x2A
+Global Const $VK_PRINT = 0x2A, $VK_PRTSCN = 0x2A, $VK_PRINTSCREEN = 0x2A
 Global Const $VK_EXECUTE = 0x2B
 Global Const $VK_SNAPSHOT = 0x2C
-Global Const $VK_INSERT = 0x2D
-Global Const $VK_INS = 0x2D
-Global Const $VK_DELETE = 0x2E
-Global Const $VK_DEL = 0x2E
+Global Const $VK_INSERT = 0x2D, $VK_INS = 0x2D
+Global Const $VK_DELETE = 0x2E, $VK_DEL = 0x2E
 Global Const $VK_HELP = 0x2F
 Global Const $VK_0 = 0x30
 Global Const $VK_1 = 0x31
@@ -121,31 +91,19 @@ Global Const $VK_Y = 0x59
 Global Const $VK_Z = 0x5A
 Global Const $VK_LWIN = 0x5B
 Global Const $VK_RWIN = 0x5C
-Global Const $VK_APPS = 0x5D
-Global Const $VK_CONTEXT = 0x5D
-Global Const $VK_CONTEXTMENU = 0x5D
+Global Const $VK_APPS = 0x5D, $VK_CONTEXT = 0x5D, $VK_CONTEXTMENU = 0x5D
 ; 0x5E reserved
 Global Const $VK_SLEEP = 0x5F
-Global Const $VK_NUMPAD0 = 0x60
-Global Const $VK_NUM0 = 0x60
-Global Const $VK_NUMPAD1 = 0x61
-Global Const $VK_NUM1 = 0x61
-Global Const $VK_NUMPAD2 = 0x62
-Global Const $VK_NUM2 = 0x62
-Global Const $VK_NUMPAD3 = 0x63
-Global Const $VK_NUM3 = 0x63
-Global Const $VK_NUMPAD4 = 0x64
-Global Const $VK_NUM4 = 0x64
-Global Const $VK_NUMPAD5 = 0x65
-Global Const $VK_NUM5 = 0x65
-Global Const $VK_NUMPAD6 = 0x66
-Global Const $VK_NUM6 = 0x66
-Global Const $VK_NUMPAD7 = 0x67
-Global Const $VK_NUM7 = 0x67
-Global Const $VK_NUMPAD8 = 0x68
-Global Const $VK_NUM8 = 0x68
-Global Const $VK_NUMPAD9 = 0x69
-Global Const $VK_NUM9 = 0x69
+Global Const $VK_NUMPAD0 = 0x60, $VK_NUM0 = 0x60
+Global Const $VK_NUMPAD1 = 0x61, $VK_NUM1 = 0x61
+Global Const $VK_NUMPAD2 = 0x62, $VK_NUM2 = 0x62
+Global Const $VK_NUMPAD3 = 0x63, $VK_NUM3 = 0x63
+Global Const $VK_NUMPAD4 = 0x64, $VK_NUM4 = 0x64
+Global Const $VK_NUMPAD5 = 0x65, $VK_NUM5 = 0x65
+Global Const $VK_NUMPAD6 = 0x66, $VK_NUM6 = 0x66
+Global Const $VK_NUMPAD7 = 0x67, $VK_NUM7 = 0x67
+Global Const $VK_NUMPAD8 = 0x68, $VK_NUM8 = 0x68
+Global Const $VK_NUMPAD9 = 0x69, $VK_NUM9 = 0x69
 Global Const $VK_MULTIPLY = 0x6A
 Global Const $VK_ADD = 0x6B
 Global Const $VK_SEPARATOR = 0x6C
@@ -184,10 +142,8 @@ Global Const $VK_F24 = 0x87
 ; 0x8D unassigned
 ; 0x8E unassigned
 ; 0x8F unassigned
-Global Const $VK_NUMLOCK = 0x90
-Global Const $VK_NUMLK = 0x90
-Global Const $VK_SCROLL = 0x91
-Global Const $VK_SCRLK = 0x91
+Global Const $VK_NUMLOCK = 0x90, $VK_NUMLK = 0x90
+Global Const $VK_SCROLL  = 0x91, $VK_SCRLK = 0x91
 ; 0x92 OEM specific
 ; 0x93 OEM specific
 ; 0x94 OEM specific
@@ -202,16 +158,12 @@ Global Const $VK_SCRLK = 0x91
 ; 0x9D unassigned
 ; 0x9E unassigned
 ; 0x9F unassigned
-Global Const $VK_LSHIFT = 0xA0
-Global Const $VK_RSHIFT = 0xA1
-Global Const $VK_LCONTROL = 0xA2
-Global Const $VK_LCTRL = 0xA2
-Global Const $VK_RCONTROL = 0xA3
-Global Const $VK_RCTRL = 0xA3
-Global Const $VK_LMENU = 0xA4
-Global Const $VK_LALT = 0xA4
-Global Const $VK_RMENU = 0xA5
-Global Const $VK_RALT = 0xA5
+Global Const $VK_LSHIFT   = 0xA0
+Global Const $VK_RSHIFT   = 0xA1
+Global Const $VK_LCONTROL = 0xA2, $VK_LCTRL = 0xA2
+Global Const $VK_RCONTROL = 0xA3, $VK_RCTRL = 0xA3
+Global Const $VK_LMENU    = 0xA4, $VK_LALT  = 0xA4
+Global Const $VK_RMENU    = 0xA5, $VK_RALT  = 0xA5
 Global Const $VK_BROWSER_BACK = 0xA6
 Global Const $VK_BROWSER_FORWARD = 0xA7
 Global Const $VK_BROWSER_REFRESH = 0xA8
