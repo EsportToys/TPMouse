@@ -346,15 +346,17 @@ Func SingletonKeyState($vKey=Null, $make=Null, $flag=Null)
      Local $change = Not ( ($flag=Null) or ($make=Null) )
      Local $after = Not BitAnd(1,$flag)
      Switch $vKey
-       Case 0x10 ; shift
-            If $change Then $self[($make=0x36?0xA1:0xA0)]=$after      ; (vkey,e0,mk) of lshift is (0xA0,0x00,0x2A), of rshift is (0xA1,0x00,0x36)
-            Return ( $self[0xA0] or $self[0xA1] )
-       Case 0x11 ; ctrl
-            If $change Then $self[(BitAnd(2,$flag)?0xA3:0xA2)]=$after ; (vkey,e0,mk) of lctrl  is (0xA2,0x00,0x1D), of rctrl  is (0xA3,0xE0,0x1D)
-            Return ( $self[0xA2] or $self[0xA3] )
-       Case 0x12 ; alt
-            If $change Then $self[(BitAnd(2,$flag)?0xA5:0xA4)]=$after ; (vkey,e0,mk) of lalt   is (0xA4,0x00,0x38), of ralt   is (0xA5,0xE0,0x38)
-            Return ( $self[0xA4] or $self[0xA5] )
+       Case $VK_SHIFT
+            If $change Then $self[ ( $make = 0x36    ? $VK_RSHIFT : $VK_LSHIFT )] = $after ; (vkey,e0,mk) of lshift is (0xA0,0x00,0x2A), of rshift is (0xA1,0x00,0x36)
+            Return ( $self[$VK_LSHIFT] or $self[$VK_RSHIFT] )
+       Case $VK_CTRL
+            If $change Then $self[ ( BitAnd(2,$flag) ? $VK_RCTRL  : $VK_LCTRL)  ] = $after ; (vkey,e0,mk) of lctrl  is (0xA2,0x00,0x1D), of rctrl  is (0xA3,0xE0,0x1D)
+            Return ( $self[$VK_LCTRL] or $self[$VK_RCTRL] )
+       Case $VK_ALT
+            If $change Then $self[ ( BitAnd(2,$flag) ? $VK_RALT   : $VK_LALT)   ] = $after ; (vkey,e0,mk) of lalt   is (0xA4,0x00,0x38), of ralt   is (0xA5,0xE0,0x38)
+            Return ( $self[$VK_LALT] or $self[$VK_RALT] )
+       Case $VK_NONE, $VK_PRNTSCN ; keys that don't deactivate normally
+            Return False
        Case Else
          If $vKey Then
             If $change Then $self[$vKey]=$after
