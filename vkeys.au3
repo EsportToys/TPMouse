@@ -40,9 +40,9 @@ Global Const $VK_UP = 0x26
 Global Const $VK_RIGHT = 0x27
 Global Const $VK_DOWN = 0x28
 Global Const $VK_SELECT = 0x29
-Global Const $VK_PRINT = 0x2A, $VK_PRTSCN = 0x2A, $VK_PRINTSCREEN = 0x2A
+Global Const $VK_PRINT = 0x2A
 Global Const $VK_EXECUTE = 0x2B
-Global Const $VK_SNAPSHOT = 0x2C
+Global Const $VK_SNAPSHOT = 0x2C, $VK_PRTSCN = 0x2C, $VK_PRINTSCREEN = 0x2C
 Global Const $VK_INSERT = 0x2D, $VK_INS = 0x2D
 Global Const $VK_DELETE = 0x2E, $VK_DEL = 0x2E
 Global Const $VK_HELP = 0x2F
