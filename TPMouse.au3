@@ -355,7 +355,7 @@ Func SingletonKeyState($vKey=Null, $make=Null, $flag=Null)
        Case $VK_ALT
             If $change Then $self[ ( BitAnd(2,$flag) ? $VK_RALT   : $VK_LALT)   ] = $after ; (vkey,e0,mk) of lalt   is (0xA4,0x00,0x38), of ralt   is (0xA5,0xE0,0x38)
             Return ( $self[$VK_LALT] or $self[$VK_RALT] )
-       Case $VK_NONE, $VK_PRTSCN ; keys that don't deactivate normally
+       Case $VK_NONE, $VK_CANCEL, $VK_PRTSCN ; keys that don't deactivate normally
             Return False
        Case Else
          If $vKey Then
