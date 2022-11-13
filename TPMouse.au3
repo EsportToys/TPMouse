@@ -301,7 +301,6 @@ Func SingletonOverlay($msg=null,$arg=null)
             If Not $self.active Then
                $self.active = True
                GUISetState(@SW_SHOW,$hOverlay)
-               GUISetState(@SW_RESTORE,$hOverlay)
                SetCursorPos(Int(($self.left+$self.right)/2),Int(($self.top+$self.bottom)/2))
                SingletonMoupress('activate')
             EndIf
