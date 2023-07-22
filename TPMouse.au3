@@ -1,10 +1,12 @@
+#NoTrayIcon
 #OnAutoItStartRegister SetProcessDPIAware
 #include 'keybinds.au3'
 #include 'vkeys.au3'
 _Singleton('TPMouse',0)
-Opt('GUICloseOnESC',False)
-Opt('TrayMenuMode',3)
+Opt('TrayAutoPause',0)
 Opt('TrayOnEventMode',1)
+Opt('TrayMenuMode',1+2)
+If Not IsAdmin() Then TrayItemSetOnEvent(TrayCreateItem('Restart as admin'),Elevate)
 TrayItemSetOnEvent(TrayCreateItem('Quit TPMouse'),Quit)
 TraySetIcon('%windir%\Cursors\aero_link_xl.cur')
 TraySetToolTip('TPMouse - Inactive')
@@ -17,6 +19,11 @@ SingletonOverlay('init')
 SingletonInertia('init')
 OnAutoItExitRegister(Cleanup)
 ProgramLoop()
+
+Func Elevate()
+     ShellExecute( @AutoItExe , @Compiled ? '' : @ScriptFullPath , '' , 'runas' )
+     Exit
+EndFunc
 
 Func Quit()
      Exit
@@ -55,7 +62,7 @@ EndFunc
 Func ProcessKeypress($struct)
      Local Static $_ = SingletonKeybinds, $sks=SingletonKeyState, $functionlist = [SingletonInertia,SingletonOverlay]
      Local Static $shiftprimed = False, $capsprimed = False
-     If $struct.VKey>0 and $struct.VKey<256 Then SingletonKeyState($struct.VKey,$struct.MakeCode,$struct.Flags)
+     If 0<$struct.VKey and $struct.VKey<255 Then SingletonKeyState($struct.VKey,$struct.MakeCode,$struct.Flags)
      Switch $struct.VKey
        Case $VK_SHIFT ; only set priming here because user might still press other keys before releasing
             If BitAnd(0x0001,$struct.Flags) Then 
