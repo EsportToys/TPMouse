@@ -34,3 +34,27 @@ https://user-images.githubusercontent.com/98432183/198895264-45823df6-8e8e-4135-
 
 https://user-images.githubusercontent.com/98432183/198895269-4a5b7266-f662-491c-810e-5a2d87ddfc47.mp4
 
+## Configuration
+
+Edit the `options.ini` file to modify the inertia parameters or keybinds. If not present, the script uses the following defaults:
+
+```
+[Inertia]
+DampingCoef=6
+BrakingCoef=60
+NormalSensitivity=1
+ScrollSensitivity=1
+
+[Bindings]
+up=VK_I
+left=VK_J
+down=VK_K
+right=VK_L
+mb1=VK_F
+mb2=VK_E
+mb3=VK_R
+brake=VK_S
+scroll=VK_SPACE
+```
+
+The keybinds will require the script to be restarted to take effect, whereas the inertia parameters are reloaded upon activation of Inertia Mode.

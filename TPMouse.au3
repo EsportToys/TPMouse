@@ -1,9 +1,12 @@
+#NoTrayIcon
 #OnAutoItStartRegister SetProcessDPIAware
 #include 'keybinds.au3'
+#include 'vkeys.au3'
 _Singleton('TPMouse',0)
-Opt('GUICloseOnESC',False)
-Opt('TrayMenuMode',3)
+Opt('TrayAutoPause',0)
 Opt('TrayOnEventMode',1)
+Opt('TrayMenuMode',1+2)
+If Not IsAdmin() Then TrayItemSetOnEvent(TrayCreateItem('Restart as admin'),Elevate)
 TrayItemSetOnEvent(TrayCreateItem('Quit TPMouse'),Quit)
 TraySetIcon('%windir%\Cursors\aero_link_xl.cur')
 TraySetToolTip('TPMouse - Inactive')
@@ -16,6 +19,11 @@ SingletonOverlay('init')
 SingletonInertia('init')
 OnAutoItExitRegister(Cleanup)
 ProgramLoop()
+
+Func Elevate()
+     ShellExecute( @AutoItExe , @Compiled ? '' : @ScriptFullPath , '' , 'runas' )
+     Exit
+EndFunc
 
 Func Quit()
      Exit
@@ -52,11 +60,11 @@ Func SetRawinput($hWnd, $enable)
 EndFunc
 
 Func ProcessKeypress($struct)
-     Local Static $_ = SingletonKeybinds, $sks=SingletonKeyState
+     Local Static $_ = SingletonKeybinds, $sks=SingletonKeyState, $functionlist = [SingletonInertia,SingletonOverlay]
      Local Static $shiftprimed = False, $capsprimed = False
-     If $struct.VKey>0 and $struct.VKey<256 Then SingletonKeyState($struct.VKey,$struct.MakeCode,$struct.Flags)
+     If 0<$struct.VKey and $struct.VKey<255 Then SingletonKeyState($struct.VKey,$struct.MakeCode,$struct.Flags)
      Switch $struct.VKey
-       Case 0x10 ; shift, only set priming here because user might still press other keys before releasing
+       Case $VK_SHIFT ; only set priming here because user might still press other keys before releasing
             If BitAnd(0x0001,$struct.Flags) Then 
                If $shiftprimed Then
                   HotKeySet('+{c}')
@@ -64,13 +72,13 @@ Func ProcessKeypress($struct)
                   HotKeySet('+{q}')
                EndIf
                $shiftprimed = False
-            ElseIf (Not $shiftprimed) And $sks(0xA0) And $sks(0xA1) Then
+            ElseIf (Not $shiftprimed) And ($sks($VK_LSHIFT) And $sks($VK_RSHIFT)) Then
                HotKeySet('+{c}',UnsetSelf)
                HotKeySet('+{g}',UnsetSelf)
                HotKeySet('+{q}',UnsetSelf)
                $shiftprimed = True
             EndIf
-       Case 0x14 ; CapsLk, only set priming here because user might still press other keys before releasing
+       Case $VK_CAPS ; only set priming here because user might still press other keys before releasing
             If BitAnd(0x0001,$struct.Flags) Then 
                If $capsprimed Then
                   HotKeySet('{c}')
@@ -84,33 +92,30 @@ Func ProcessKeypress($struct)
                HotKeySet('{q}',UnsetSelf)
                $capsprimed = True
             EndIf
-       Case 0x1B, 0x51 ; esc or Q
+       Case $VK_ESC, $VK_Q
             If BitAnd(0x0001,$struct.Flags) Then 
-               If 0x51 = $struct.VKey And Not ($sks(0xA0) And $sks(0xA1) Or $sks(0x14)) Then Return
-               SingletonOverlay('deactivate')
-               SingletonInertia('deactivate')
+               If $VK_Q = $struct.VKey And Not ( $sks($VK_CAPS) Or ($sks($VK_LSHIFT) And $sks($VK_RSHIFT)) ) Then Return
+               For $func in $functionlist
+                   If $func() Then $func('deactivate')
+               Next
                DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[0]), "dword", 32512)
                TraySetIcon("%windir%\Cursors\aero_link_xl.cur")
                TraySetToolTip('TPMouse - Inactive')
             EndIf
-       Case 0x47 ; G
+       Case $VK_C, $VK_G
             If BitAnd(0x0001,$struct.Flags) Then
-               If $sks(0x14) Or ($sks(0xA0) And $sks(0xA1)) Then ; CapsLk+G or LShift+RShift+G
-                  If SingletonInertia() Then SingletonInertia('deactivate')
-                  SingletonOverlay('activate')
-                  DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[2]), "dword", 32512)
-                  TraySetIcon("%windir%\Cursors\aero_pin_xl.cur")
-                  TraySetToolTip('TPMouse - Grid')
-               EndIf
-            EndIf
-       Case 0x43 ; C
-            If BitAnd(0x0001,$struct.Flags) Then
-               If $sks(0x14) Or ($sks(0xA0) And $sks(0xA1)) Then ; CapsLk+C or LShift+RShift+C
-                  If SingletonOverlay() Then SingletonOverlay('deactivate')
-                  SingletonInertia('activate')
-                  DllCall($user32, "bool", "SetSystemCursor", "handle", CopyIcon($hCursors[1]), "dword", 32512)
-                  TraySetIcon("%windir%\Cursors\aero_person_xl.cur")
-                  TraySetToolTip('TPMouse - Inertia')
+               If $sks($VK_CAPS) Or ($sks($VK_LSHIFT) And $sks($VK_RSHIFT)) Then
+                  Local $act = ( $VK_C=$struct.VKey ? SingletonInertia       : SingletonOverlay )       , _
+                        $ico = ( $VK_C=$struct.VKey ? 'aero_person_xl.cur'   : 'aero_pin_xl.cur' )      , _
+                        $cur = ( $VK_C=$struct.VKey ? CopyIcon($hCursors[1]) : CopyIcon($hCursors[2]) ) , _
+                        $tip = ( $VK_C=$struct.VKey ? 'TPMouse - Inertia'    : 'TPMouse - Grid')
+                  For $func in $functionlist
+                      If $func() and not ($func=$act) Then $func('deactivate')
+                  Next
+                  $act('activate')
+                  DllCall($user32, "bool", "SetSystemCursor", "handle", $cur, "dword", 32512)
+                  TraySetIcon('%windir%\Cursors\' & $ico)
+                  TraySetToolTip($tip)
                EndIf
             EndIf
        Case $_('up')
@@ -290,18 +295,19 @@ Func SingletonOverlay($msg=null,$arg=null)
              GUICtrlSetBkColor($hFrame,0xe1e1e1) ; sets canvas color
              DllCall("user32.dll", "bool", "SetLayeredWindowAttributes", "hwnd", $hOverlay, "INT", 0x00e1e1e1, "byte", 255, "dword", 0x03)
              GUISetState(@SW_DISABLE)
+       Case 'set'
+            GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
        Case 'reset'
             $self.left = 0
             $self.top = 0
             $self.right = @DesktopWidth
             $self.bottom = @DesktopHeight
-            GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
+            SingletonOverlay('set')
        Case 'activate'
             SingletonOverlay('reset')
             If Not $self.active Then
                $self.active = True
                GUISetState(@SW_SHOW,$hOverlay)
-               GUISetState(@SW_RESTORE,$hOverlay)
                SetCursorPos(Int(($self.left+$self.right)/2),Int(($self.top+$self.bottom)/2))
                SingletonMoupress('activate')
             EndIf
@@ -315,25 +321,25 @@ Func SingletonOverlay($msg=null,$arg=null)
        Case 'up'
             If $self.active Then
                $self.bottom = Int(($self.top+$self.bottom)/2)
-               GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
+               SingletonOverlay('set')
                SetCursorPos( Int(($self.left+$self.right)/2), Int(($self.top+$self.bottom)/2) )
             EndIf
        Case 'left'
             If $self.active Then
                $self.right  = Int(($self.left+$self.right)/2)
-               GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
+               SingletonOverlay('set')
                SetCursorPos( Int(($self.left+$self.right)/2), Int(($self.top+$self.bottom)/2) )
             EndIf
        Case 'down'
             If $self.active Then
                $self.top    = Int(($self.top+$self.bottom)/2)
-               GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
+               SingletonOverlay('set')
                SetCursorPos( Int(($self.left+$self.right)/2), Int(($self.top+$self.bottom)/2) )
             EndIf
        Case 'right'
             If $self.active Then
                $self.left   = Int(($self.left+$self.right)/2)
-               GUICtrlSetPos($hFrame,$self.left,$self.top,$self.right-$self.left,$self.bottom-$self.top)
+               SingletonOverlay('set')
                SetCursorPos(Int(($self.left+$self.right)/2), Int(($self.top+$self.bottom)/2))
             EndIf
        Case Else
@@ -346,15 +352,17 @@ Func SingletonKeyState($vKey=Null, $make=Null, $flag=Null)
      Local $change = Not ( ($flag=Null) or ($make=Null) )
      Local $after = Not BitAnd(1,$flag)
      Switch $vKey
-       Case 0x10 ; shift
-            If $change Then $self[($make=0x36?0xA1:0xA0)]=$after      ; (vkey,e0,mk) of lshift is (0xA0,0x00,0x2A), of rshift is (0xA1,0x00,0x36)
-            Return ( $self[0xA0] or $self[0xA1] )
-       Case 0x11 ; ctrl
-            If $change Then $self[(BitAnd(2,$flag)?0xA3:0xA2)]=$after ; (vkey,e0,mk) of lctrl  is (0xA2,0x00,0x1D), of rctrl  is (0xA3,0xE0,0x1D)
-            Return ( $self[0xA2] or $self[0xA3] )
-       Case 0x12 ; alt
-            If $change Then $self[(BitAnd(2,$flag)?0xA5:0xA4)]=$after ; (vkey,e0,mk) of lalt   is (0xA4,0x00,0x38), of ralt   is (0xA5,0xE0,0x38)
-            Return ( $self[0xA4] or $self[0xA5] )
+       Case $VK_SHIFT
+            If $change Then $self[ ( $make = 0x36    ? $VK_RSHIFT : $VK_LSHIFT )] = $after ; (vkey,e0,mk) of lshift is (0xA0,0x00,0x2A), of rshift is (0xA1,0x00,0x36)
+            Return ( $self[$VK_LSHIFT] or $self[$VK_RSHIFT] )
+       Case $VK_CTRL
+            If $change Then $self[ ( BitAnd(2,$flag) ? $VK_RCTRL  : $VK_LCTRL)  ] = $after ; (vkey,e0,mk) of lctrl  is (0xA2,0x00,0x1D), of rctrl  is (0xA3,0xE0,0x1D)
+            Return ( $self[$VK_LCTRL] or $self[$VK_RCTRL] )
+       Case $VK_ALT
+            If $change Then $self[ ( BitAnd(2,$flag) ? $VK_RALT   : $VK_LALT)   ] = $after ; (vkey,e0,mk) of lalt   is (0xA4,0x00,0x38), of ralt   is (0xA5,0xE0,0x38)
+            Return ( $self[$VK_LALT] or $self[$VK_RALT] )
+       Case $VK_NONE, $VK_CANCEL, $VK_PRTSCN ; keys that don't deactivate normally
+            Return False
        Case Else
          If $vKey Then
             If $change Then $self[$vKey]=$after
