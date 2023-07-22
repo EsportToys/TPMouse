@@ -56,3 +56,5 @@ mb3=VK_R
 brake=VK_S
 scroll=VK_SPACE
 ```
+
+The keybinds will require the script to be restarted to take effect, whereas the inertia parameters are reloaded upon activation of Inertia Mode.
