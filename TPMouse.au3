@@ -2,6 +2,7 @@
 #OnAutoItStartRegister SetProcessDPIAware
 #include 'keybinds.au3'
 #include 'vkeys.au3'
+If IsAdmin() Then Sleep(100)
 _Singleton('TPMouse',0)
 Opt('TrayAutoPause',0)
 Opt('TrayOnEventMode',1)
