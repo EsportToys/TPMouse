@@ -1,13 +1,17 @@
 #NoTrayIcon
 #OnAutoItStartRegister SetProcessDPIAware
-#include 'keybinds.au3'
+#include 'singleton.au3'
 #include 'vkeys.au3'
 If IsAdmin() Then Sleep(100)
 _Singleton('TPMouse',0)
+
+Global $HOTKEY_STR_MAP
+
 Opt('TrayAutoPause',0)
 Opt('TrayOnEventMode',1)
 Opt('TrayMenuMode',1+2)
 If Not IsAdmin() Then TrayItemSetOnEvent(TrayCreateItem('Restart as admin'),Elevate)
+TrayItemSetOnEvent(TrayCreateItem('Reload config'),ReloadKeybinds)
 TrayItemSetOnEvent(TrayCreateItem('Quit TPMouse'),Quit)
 TraySetIcon('%windir%\Cursors\aero_link_xl.cur')
 TraySetToolTip('TPMouse - Inactive')
@@ -15,6 +19,7 @@ Global $user32 = DllOpen('user32.dll')
 Global $hInputWnd = GUICreate('')
 Global $hCursors = [CopyIcon(GetSystemCursor('NORMAL')),CopyIcon(GetSystemCursor('CROSS')),CopyIcon(GetSystemCursor('SIZEALL'))]
 GUIRegisterMsg(0x00ff,WM_INPUT)
+GUIRegisterMsg(0x0400,ReloadKeybinds)
 SetRawinput($hInputWnd, True)
 SingletonOverlay('init')
 SingletonInertia('init')
@@ -58,6 +63,14 @@ Func SetRawinput($hWnd, $enable)
      $struct.UsagePage = 0x01 ; generic desktop
      $struct.Usage = 0x06 ; keyboard
      DllCall($user32, 'bool', 'RegisterRawInputDevices', 'struct*', $struct, 'uint', 1, 'uint', DllStructGetSize($struct))
+EndFunc
+
+Func ReloadKeybinds()
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
+     Local Static $_1 = DllStructSetData($struct,'VKey',$VK_ESC)
+     Local Static $_2 = DllStructSetData($struct,'Flags',1)
+     ProcessKeypress($struct)
+     SingletonKeybinds('reload')
 EndFunc
 
 Func ProcessKeypress($struct)
@@ -422,17 +435,17 @@ Func ScrollMouseXY($dx,$dy)
      Local Static $SIZE = DllStructGetSize(DllStructCreate('dword;struct;long;long;dword;dword;dword;ulong_ptr;endstruct;'))
      Local $count = ($dx?1:0)+($dy?1:0)
      Local $struct, $arr = DllStructCreate('byte[' & $count*$SIZE & ']'), $ptr = DllStructGetPtr($arr)
-     If $dx Then
-        $struct = DllStructCreate('dword type;struct;long;long;dword data;dword flag;dword;ulong_ptr;endstruct;', $ptr)
-        DllStructSetData($struct,'type',0)
-        DllStructSetData($struct,'flag',0x1000)
-        DllStructSetData($struct,'data',$dx)
-     EndIf
      If $dy Then
-        $struct = DllStructCreate('dword type;struct;long;long;dword data;dword flag;dword;ulong_ptr;endstruct;', $ptr+($dx?$SIZE:0))
+        $struct = DllStructCreate('dword type;struct;long;long;dword data;dword flag;dword;ulong_ptr;endstruct;', $ptr)
         DllStructSetData($struct,'type',0)
         DllStructSetData($struct,'flag',0x0800)
         DllStructSetData($struct,'data',$dy)
+     EndIf
+     If $dx Then
+        $struct = DllStructCreate('dword type;struct;long;long;dword data;dword flag;dword;ulong_ptr;endstruct;', $ptr+($dy?$SIZE:0))
+        DllStructSetData($struct,'type',0)
+        DllStructSetData($struct,'flag',0x1000)
+        DllStructSetData($struct,'data',$dx)
      EndIf
      Local $aCall = DllCall( $user32, 'uint', 'SendInput', 'uint', $count, 'struct*', $ptr, 'int', $SIZE )
     Return $aCall[0]
@@ -499,53 +512,107 @@ Func UnsetSelf()
      HotKeySet(@HotKeyPressed)
 EndFunc
 
-; #FUNCTION# ====================================================================================================================
-; Author ........: Valik
-; Modified.......:
-; ===============================================================================================================================
-Func _Singleton($sOccurrenceName, $iFlag = 0)
-	Local Const $ERROR_ALREADY_EXISTS = 183
-	Local Const $SECURITY_DESCRIPTOR_REVISION = 1
-	Local $tSecurityAttributes = 0
 
-	If BitAND($iFlag, 2) Then
-		; The size of SECURITY_DESCRIPTOR is 20 bytes.  We just
-		; need a block of memory the right size, we aren't going to
-		; access any members directly so it's not important what
-		; the members are, just that the total size is correct.
-		Local $tSecurityDescriptor = DllStructCreate("byte;byte;word;ptr[4]")
-		; Initialize the security descriptor.
-		Local $aCall = DllCall("advapi32.dll", "bool", "InitializeSecurityDescriptor", _
-				"struct*", $tSecurityDescriptor, "dword", $SECURITY_DESCRIPTOR_REVISION)
-		If @error Then Return SetError(@error, @extended, 0)
-		If $aCall[0] Then
-			; Add the NULL DACL specifying access to everybody.
-			$aCall = DllCall("advapi32.dll", "bool", "SetSecurityDescriptorDacl", _
-					"struct*", $tSecurityDescriptor, "bool", 1, "ptr", 0, "bool", 0)
-			If @error Then Return SetError(@error, @extended, 0)
-			If $aCall[0] Then
-				; Create a SECURITY_ATTRIBUTES structure.
-				$tSecurityAttributes = DllStructCreate($tagSECURITY_ATTRIBUTES)
-				; Assign the members.
-				DllStructSetData($tSecurityAttributes, 1, DllStructGetSize($tSecurityAttributes))
-				DllStructSetData($tSecurityAttributes, 2, DllStructGetPtr($tSecurityDescriptor))
-				DllStructSetData($tSecurityAttributes, 3, 0)
-			EndIf
-		EndIf
-	EndIf
+#Region keybinds
 
-	Local $aHandle = DllCall("kernel32.dll", "handle", "CreateMutexW", "struct*", $tSecurityAttributes, "bool", 1, "wstr", $sOccurrenceName)
-	If @error Then Return SetError(@error, @extended, 0)
-	Local $aLastError = DllCall("kernel32.dll", "dword", "GetLastError")
-	If @error Then Return SetError(@error, @extended, 0)
-	If $aLastError[0] = $ERROR_ALREADY_EXISTS Then
-		If BitAND($iFlag, 1) Then
-			DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $aHandle[0])
-			If @error Then Return SetError(@error, @extended, 0)
-			Return SetError($aLastError[0], $aLastError[0], 0)
-		Else
-			Exit -1
-		EndIf
-	EndIf
-	Return $aHandle[0]
-EndFunc   ;==>_Singleton
+
+Func SingletonKeybinds($action, $mode=0)
+     ; mode 0 returns vkey, mode 1 returns hotkey
+     Local Static _
+           $up     = [ $VK_I     , '{i}'     ] , _
+           $left   = [ $VK_J     , '{j}'     ] , _
+           $down   = [ $VK_K     , '{k}'     ] , _
+           $right  = [ $VK_L     , '{l}'     ] , _
+           $mb1    = [ $VK_F     , '{f}'     ] , _
+           $mb2    = [ $VK_E     , '{e}'     ] , _
+           $mb3    = [ $VK_R     , '{r}'     ] , _
+           $brake  = [ $VK_S     , '{s}'     ] , _
+           $scroll = [ $VK_SPACE , '{space}' ]
+     Local Static $map = InitializeKeybinds($up,$left,$down,$right,$mb1,$mb2,$mb3,$brake,$scroll)
+     Local $i = $mode ? 1 : 0
+     Switch $action
+       Case 'up'
+            Return $up[$i]
+       Case 'left'
+            Return $left[$i]
+       Case 'down'
+            Return $down[$i]
+       Case 'right'
+            Return $right[$i]
+       Case 'mb1'
+            Return $mb1[$i]
+       Case 'mb2'
+            Return $mb2[$i]
+       Case 'mb3'
+            Return $mb3[$i]
+       Case 'brake'
+            Return $brake[$i]
+       Case 'scroll'
+            Return $scroll[$i]
+       Case 'reload'
+            $map = InitializeKeybinds($up,$left,$down,$right,$mb1,$mb2,$mb3,$brake,$scroll)
+     EndSwitch
+EndFunc
+Func EnableHotKeys()
+     Local Static $_ = SingletonKeybinds, $arr = ['up','left','down','right','mb1','mb2','mb3','brake','scroll']
+     For $cmd in $arr
+         HotKeySet( $_($cmd,1) , TranslateHotKeys )
+     Next
+EndFunc
+Func DisableHotKeys()
+     Local Static $_ = SingletonKeybinds, $arr = ['up','left','down','right','mb1','mb2','mb3','brake','scroll']
+     For $cmd in $arr
+         HotKeySet( $_($cmd,1) )
+     Next
+EndFunc
+Func TranslateHotKeys()
+     Local Static $struct = DllStructCreate('ushort MakeCode;ushort Flags;ushort VKey;')
+     Local $vk = $HOTKEY_STR_MAP[@HotKeyPressed]
+     If 0<$vk and $vk<255 Then
+        $struct.VKey = $vk
+        ProcessKeypress($struct)
+     EndIf
+EndFunc
+Func InitializeKeybinds(ByRef $up,ByRef $left,ByRef $down,ByRef $right,ByRef $mb1,ByRef $mb2,ByRef $mb3,ByRef $brake,ByRef $scroll)
+     Local $upKey     = IniRead('options.ini','Bindings','up'    , 'VK_I')
+     Local $leftKey   = IniRead('options.ini','Bindings','left'  , 'VK_J')
+     Local $downKey   = IniRead('options.ini','Bindings','down'  , 'VK_K')
+     Local $rightKey  = IniRead('options.ini','Bindings','right' , 'VK_L')
+     Local $mb1Key    = IniRead('options.ini','Bindings','mb1'   , 'VK_F')
+     Local $mb2Key    = IniRead('options.ini','Bindings','mb2'   , 'VK_E')
+     Local $mb3Key    = IniRead('options.ini','Bindings','mb3'   , 'VK_R')
+     Local $brakeKey  = IniRead('options.ini','Bindings','brake' , 'VK_S')
+     Local $scrollKey = IniRead('options.ini','Bindings','scroll', 'VK_SPACE')
+     $up[0]     = Eval($upKey)
+     $left[0]   = Eval($leftKey)
+     $down[0]   = Eval($downKey)
+     $right[0]  = Eval($rightKey)
+     $mb1[0]    = Eval($mb1Key)
+     $mb2[0]    = Eval($mb2Key)
+     $mb3[0]    = Eval($mb3Key)
+     $brake[0]  = Eval($brakeKey)
+     $scroll[0] = Eval($scrollKey)
+     $up[1]     = '{' & StringLower(StringReplace($upKey,'VK_','')) & '}'
+     $left[1]   = '{' & StringLower(StringReplace($leftKey,'VK_','')) & '}'
+     $down[1]   = '{' & StringLower(StringReplace($downKey,'VK_','')) & '}'
+     $right[1]  = '{' & StringLower(StringReplace($rightKey,'VK_','')) & '}'
+     $mb1[1]    = '{' & StringLower(StringReplace($mb1Key,'VK_','')) & '}'
+     $mb2[1]    = '{' & StringLower(StringReplace($mb2Key,'VK_','')) & '}'
+     $mb3[1]    = '{' & StringLower(StringReplace($mb3Key,'VK_','')) & '}'
+     $brake[1]  = '{' & StringLower(StringReplace($brakeKey,'VK_','')) & '}'
+     $scroll[1] = '{' & StringLower(StringReplace($scrollKey,'VK_','')) & '}'
+     Local $map[]
+     $map[$up[1]]=$up[0]
+     $map[$left[1]]=$left[0]
+     $map[$down[1]]=$down[0]
+     $map[$right[1]]=$right[0]
+     $map[$mb1[1]]=$mb1[0]
+     $map[$mb2[1]]=$mb2[0]
+     $map[$mb3[1]]=$mb3[0]
+     $map[$brake[1]]=$brake[0]
+     $map[$scroll[1]]=$scroll[0]
+     $HOTKEY_STR_MAP = $map
+     Return $map
+EndFunc
+
+#EndRegion
