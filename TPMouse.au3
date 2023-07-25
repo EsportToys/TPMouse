@@ -9,7 +9,6 @@ Global $HOTKEY_STR_MAP
 
 Opt('TrayAutoPause',0)
 Opt('TrayOnEventMode',1)
-Opt('GUIOnEventMode',1)
 Opt('TrayMenuMode',1+2)
 If Not IsAdmin() Then TrayItemSetOnEvent(TrayCreateItem('Restart as admin'),Elevate)
 TrayItemSetOnEvent(TrayCreateItem('Reload config'),ReloadKeybinds)
@@ -18,7 +17,6 @@ TraySetIcon('%windir%\Cursors\aero_link_xl.cur')
 TraySetToolTip('TPMouse - Inactive')
 Global $user32 = DllOpen('user32.dll')     
 Global $hInputWnd = GUICreate('')
-GUISetOnEvent(-3,Quit)
 Global $hCursors = [CopyIcon(GetSystemCursor('NORMAL')),CopyIcon(GetSystemCursor('CROSS')),CopyIcon(GetSystemCursor('SIZEALL'))]
 GUIRegisterMsg(0x00ff,WM_INPUT)
 GUIRegisterMsg(0x0400,ReloadKeybinds)
