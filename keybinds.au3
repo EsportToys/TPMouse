@@ -35,6 +35,8 @@ Func SingletonKeybinds($action, $mode=0)
             Return $brake[$i]
        Case 'scroll'
             Return $scroll[$i]
+       Case 'reload'
+            $map = InitializeKeybinds($up,$left,$down,$right,$mb1,$mb2,$mb3,$brake,$scroll)
      EndSwitch
 EndFunc
 Func EnableHotKeys()
