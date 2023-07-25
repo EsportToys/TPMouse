@@ -10,7 +10,6 @@ Opt('TrayOnEventMode',1)
 Opt('GUIOnEventMode',1)
 Opt('TrayMenuMode',1+2)
 If Not IsAdmin() Then TrayItemSetOnEvent(TrayCreateItem('Restart as admin'),Elevate)
-;TrayItemSetOnEvent(TrayCreateItem('TPMouse Options'),Options)
 TrayItemSetOnEvent(TrayCreateItem('Reload config'),ReloadKeybinds)
 TrayItemSetOnEvent(TrayCreateItem('Quit TPMouse'),Quit)
 TraySetIcon('%windir%\Cursors\aero_link_xl.cur')
@@ -26,10 +25,6 @@ SingletonOverlay('init')
 SingletonInertia('init')
 OnAutoItExitRegister(Cleanup)
 ProgramLoop()
-
-Func Options()
-     Run( @AutoItExe & ' ' & @ScriptDir & '\options.au3 ' & @AutoItPID & ' ' & $hInputWnd)
-EndFunc
 
 Func Elevate()
      ShellExecute( @AutoItExe , @Compiled ? '' : @ScriptFullPath , '' , 'runas' )
