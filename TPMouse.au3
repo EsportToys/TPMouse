@@ -11,6 +11,7 @@ Opt('TrayAutoPause',0)
 Opt('TrayOnEventMode',1)
 Opt('TrayMenuMode',1+2)
 If Not IsAdmin() Then TrayItemSetOnEvent(TrayCreateItem('Restart as admin'),Elevate)
+TrayItemSetOnEvent(TrayCreateItem('Open config'),OpenConfig)
 TrayItemSetOnEvent(TrayCreateItem('Reload config'),ReloadKeybinds)
 TrayItemSetOnEvent(TrayCreateItem('Quit TPMouse'),Quit)
 TraySetIcon('%windir%\Cursors\aero_link_xl.cur')
@@ -46,7 +47,7 @@ Func ProgramLoop()
 EndFunc
 
 Func Cleanup()
-     DllCall( $user32 , "bool","SetSystemCursor" , "handle",$hCursors[0], "dword",32512 )
+     DllCall( $user32 , 'bool' , 'SystemParametersInfo' , 'uint' , 0x0057 , 'uint' , 0 , 'struct*' , Null , 'uint' , 0 )
      DllClose($user32)
 EndFunc
 
@@ -71,6 +72,10 @@ Func ReloadKeybinds()
      Local Static $_2 = DllStructSetData($struct,'Flags',1)
      ProcessKeypress($struct)
      SingletonKeybinds('reload')
+EndFunc
+
+Func OpenConfig()
+     ShellExecute(@WorkingDir & '\' & 'options.ini')
 EndFunc
 
 Func ProcessKeypress($struct)
