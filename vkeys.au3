@@ -1,4 +1,3 @@
-#include-once
 Global Const $VK_LBUTTON  = 0x01, $VK_MOUSE1 = 0x01, $VK_MB1 = 0x01
 Global Const $VK_RBUTTON  = 0x02, $VK_MOUSE2 = 0x02, $VK_MB2 = 0x02
 Global Const $VK_CANCEL   = 0x03
@@ -19,7 +18,7 @@ Global Const $VK_CONTROL = 0x11, $VK_CTRL = 0x11
 Global Const $VK_MENU = 0x12, $VK_ALT = 0x12
 Global Const $VK_PAUSE = 0x13
 Global Const $VK_CAPITAL = 0x14, $VK_CAPSLK = 0x14, $VK_CAPSLOCK = 0x14, $VK_CAPS = 0x14
-Global Const $VK_HANGUL = 0x15, $VK_KANA = 0x15
+Global Const $VK_HANGEUL = 0x15, $VK_HANGUL = 0x15, $VK_KANA = 0x15
 Global Const $VK_IME_ON = 0x16
 Global Const $VK_JUNJA = 0x17
 Global Const $VK_FINAL = 0x18
@@ -134,21 +133,21 @@ Global Const $VK_F21 = 0x84
 Global Const $VK_F22 = 0x85
 Global Const $VK_F23 = 0x86
 Global Const $VK_F24 = 0x87
-; 0x88 unassigned
-; 0x89 unassigned
-; 0x8A unassigned
-; 0x8B unassigned
-; 0x8C unassigned
-; 0x8D unassigned
-; 0x8E unassigned
-; 0x8F unassigned
+Global Const $VK_NAVIGATION_VIEW   = 136 ; 0x88 unassigned
+Global Const $VK_NAVIGATION_MENU   = 137 ; 0x89 unassigned
+Global Const $VK_NAVIGATION_UP     = 138 ; 0x8A unassigned
+Global Const $VK_NAVIGATION_DOWN   = 139 ; 0x8B unassigned
+Global Const $VK_NAVIGATION_LEFT   = 140 ; 0x8C unassigned
+Global Const $VK_NAVIGATION_RIGHT  = 141 ; 0x8D unassigned
+Global Const $VK_NAVIGATION_ACCEPT = 142 ; 0x8E unassigned
+Global Const $VK_NAVIGATION_CANCEL = 143 ; 0x8F unassigned
 Global Const $VK_NUMLOCK = 0x90, $VK_NUMLK = 0x90
 Global Const $VK_SCROLL  = 0x91, $VK_SCRLK = 0x91
-; 0x92 OEM specific
-; 0x93 OEM specific
-; 0x94 OEM specific
-; 0x95 OEM specific
-; 0x96 OEM specific
+Global Const $VK_OEM_FJ_JISHO   = 146, $VK_OEM_NEC_EQUAL = 146 ; 0x92 OEM specific
+Global Const $VK_OEM_FJ_MASSHOU = 147                          ; 0x93 OEM specific
+Global Const $VK_OEM_FJ_TOUROKU = 148                          ; 0x94 OEM specific
+Global Const $VK_OEM_FJ_LOYA    = 149                          ; 0x95 OEM specific
+Global Const $VK_OEM_FJ_ROYA    = 150                          ; 0x96 OEM specific
 ; 0x97 unassigned
 ; 0x98 unassigned
 ; 0x99 unassigned
@@ -184,66 +183,66 @@ Global Const $VK_LAUNCH_APP1 = 0xB6
 Global Const $VK_LAUNCH_APP2 = 0xB7
 ; 0xB8 reserved
 ; 0xB9 reserved
-Global Const $VK_OEM_1 = 0xBA ; semicolon/colon for US standard, can vary by keyboard
-Global Const $VK_OEM_PLUS = 0xBB ; equal/plus, all layouts
-Global Const $VK_OEM_COMMA = 0xBC ; comma/lessthan, all layouts
-Global Const $VK_OEM_MINUS = 0xBD ; minus/underscore, all layouts
+Global Const $VK_OEM_1      = 0xBA ; semicolon/colon for US standard, can vary by keyboard
+Global Const $VK_OEM_PLUS   = 0xBB ; equal/plus, all layouts
+Global Const $VK_OEM_COMMA  = 0xBC ; comma/lessthan, all layouts
+Global Const $VK_OEM_MINUS  = 0xBD ; minus/underscore, all layouts
 Global Const $VK_OEM_PERIOD = 0xBE ; period/greaterthan, all layouts
-Global Const $VK_OEM_2 = 0xBF ; slash/questionmark for US standard, can vary by keyboard
-Global Const $VK_OEM_3 = 0xC0 ; backtick/tilde for US standard, can vary by keyboard
-; 0xC1 reserved
-; 0xC2 reserved
-; 0xC3 reserved
-; 0xC4 reserved
-; 0xC5 reserved
-; 0xC6 reserved
-; 0xC7 reserved
-; 0xC8 reserved
-; 0xC9 reserved
-; 0xCA reserved
-; 0xCB reserved
-; 0xCC reserved
-; 0xCD reserved
-; 0xCE reserved
-; 0xCF reserved
-; 0xD0 reserved
-; 0xD1 reserved
-; 0xD2 reserved
-; 0xD3 reserved
-; 0xD4 reserved
-; 0xD5 reserved
-; 0xD6 reserved
-; 0xD7 reserved
-; 0xD8 unassigned
-; 0xD9 unassigned
-; 0xDA unassigned
-Global Const $VK_OEM_4 = 0xDB ; left square/curly bracket for US standard, can vary by keyboard
-Global Const $VK_OEM_5 = 0xDC ; backslash/pipe for US standard, can vary by keyboard
-Global Const $VK_OEM_6 = 0xDD ; right square/curly bracket for US standard, can vary by keyboard
-Global Const $VK_OEM_7 = 0xDE ; single/double quote for US standard, can vary by keyboard
-Global Const $VK_OEM_8 = 0xDF
+Global Const $VK_OEM_2      = 0xBF ; slash/questionmark for US standard, can vary by keyboard
+Global Const $VK_OEM_3      = 0xC0 ; backtick/tilde for US standard, can vary by keyboard
+                                                       ; 0xC1 reserved
+                                                       ; 0xC2 reserved
+Global Const $VK_GAMEPAD_A                       = 195 ; 0xC3 reserved
+Global Const $VK_GAMEPAD_B                       = 196 ; 0xC4 reserved
+Global Const $VK_GAMEPAD_X                       = 197 ; 0xC5 reserved
+Global Const $VK_GAMEPAD_Y                       = 198 ; 0xC6 reserved
+Global Const $VK_GAMEPAD_RIGHT_SHOULDER          = 199 ; 0xC7 reserved
+Global Const $VK_GAMEPAD_LEFT_SHOULDER           = 200 ; 0xC8 reserved
+Global Const $VK_GAMEPAD_LEFT_TRIGGER            = 201 ; 0xC9 reserved
+Global Const $VK_GAMEPAD_RIGHT_TRIGGER           = 202 ; 0xCA reserved
+Global Const $VK_GAMEPAD_DPAD_UP                 = 203 ; 0xCB reserved
+Global Const $VK_GAMEPAD_DPAD_DOWN               = 204 ; 0xCC reserved
+Global Const $VK_GAMEPAD_DPAD_LEFT               = 205 ; 0xCD reserved
+Global Const $VK_GAMEPAD_DPAD_RIGHT              = 206 ; 0xCE reserved
+Global Const $VK_GAMEPAD_MENU                    = 207 ; 0xCF reserved
+Global Const $VK_GAMEPAD_VIEW                    = 208 ; 0xD0 reserved
+Global Const $VK_GAMEPAD_LEFT_THUMBSTICK_BUTTON  = 209 ; 0xD1 reserved
+Global Const $VK_GAMEPAD_RIGHT_THUMBSTICK_BUTTON = 210 ; 0xD2 reserved
+Global Const $VK_GAMEPAD_LEFT_THUMBSTICK_UP      = 211 ; 0xD3 reserved
+Global Const $VK_GAMEPAD_LEFT_THUMBSTICK_DOWN    = 212 ; 0xD4 reserved
+Global Const $VK_GAMEPAD_LEFT_THUMBSTICK_RIGHT   = 213 ; 0xD5 reserved
+Global Const $VK_GAMEPAD_LEFT_THUMBSTICK_LEFT    = 214 ; 0xD6 reserved
+Global Const $VK_GAMEPAD_RIGHT_THUMBSTICK_UP     = 215 ; 0xD7 reserved
+Global Const $VK_GAMEPAD_RIGHT_THUMBSTICK_DOWN   = 216 ; 0xD8 reserved
+Global Const $VK_GAMEPAD_RIGHT_THUMBSTICK_RIGHT  = 217 ; 0xD9 reserved
+Global Const $VK_GAMEPAD_RIGHT_THUMBSTICK_LEFT   = 218 ; 0xDA reserved
+Global Const $VK_OEM_4      = 0xDB ; left square/curly bracket for US standard, can vary by keyboard
+Global Const $VK_OEM_5      = 0xDC ; backslash/pipe for US standard, can vary by keyboard
+Global Const $VK_OEM_6      = 0xDD ; right square/curly bracket for US standard, can vary by keyboard
+Global Const $VK_OEM_7      = 0xDE ; single/double quote for US standard, can vary by keyboard
+Global Const $VK_OEM_8      = 0xDF
 ; 0xE0 reserved
-; 0xE1 OEM specific
-Global Const $VK_OEM_102 = 0xE2
-; 0xE3 OEM specific
-; 0xE4 OEM specific
+Global Const $VK_OEM_AX     = 225  ; 0xE1 OEM specific
+Global Const $VK_OEM_102    = 0xE2
+Global Const $VK_ICO_HELP   = 227  ; 0xE3 OEM specific
+Global Const $VK_ICO_00     = 228  ; 0xE4 OEM specific
 Global Const $VK_PROCESSKEY = 0xE5
-; 0xE6 OEM specific
-Global Const $VK_PACKET = 0xE7
+Global Const $VK_ICO_CLEAR  = 230  ; 0xE6 OEM specific
+Global Const $VK_PACKET     = 0xE7
 ; 0xE8 unassigned
-; 0xE9 OEM specific
-; 0xEA OEM specific
-; 0xEB OEM specific
-; 0xEC OEM specific
-; 0xED OEM specific
-; 0xEE OEM specific
-; 0xEF OEM specific
-; 0xF0 OEM specific
-; 0xF1 OEM specific
-; 0xF2 OEM specific
-; 0xF3 OEM specific
-; 0xF4 OEM specific
-; 0xF5 OEM specific
+Global Const $VK_OEM_RESET   = 233 ; 0xE9 OEM specific
+Global Const $VK_OEM_JUMP    = 234 ; 0xEA OEM specific
+Global Const $VK_OEM_PA1     = 235 ; 0xEB OEM specific
+Global Const $VK_OEM_PA2     = 236 ; 0xEC OEM specific
+Global Const $VK_OEM_PA3     = 237 ; 0xED OEM specific
+Global Const $VK_OEM_WSCTRL  = 238 ; 0xEE OEM specific
+Global Const $VK_OEM_CUSEL   = 239 ; 0xEF OEM specific
+Global Const $VK_OEM_ATTN    = 240 ; 0xF0 OEM specific
+Global Const $VK_OEM_FINISH  = 241 ; 0xF1 OEM specific
+Global Const $VK_OEM_COPY    = 242 ; 0xF2 OEM specific
+Global Const $VK_OEM_AUTO    = 243 ; 0xF3 OEM specific
+Global Const $VK_OEM_ENLW    = 244 ; 0xF4 OEM specific
+Global Const $VK_OEM_BACKTAB = 245 ; 0xF5 OEM specific
 Global Const $VK_ATTN = 0xF6
 Global Const $VK_CRSEL = 0xF7
 Global Const $VK_EXSEL = 0xF8
@@ -254,3 +253,4 @@ Global Const $VK_NONAME = 0xFC
 Global Const $VK_PA1 = 0xFD
 Global Const $VK_OEM_CLEAR = 0xFE
 Global Const $VK_NONE = 0xFF ; no mapping
+#include-once
